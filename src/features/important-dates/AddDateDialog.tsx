@@ -10,6 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { useDates } from "./use-dates";
 import { DATE_CATEGORIES, type DateCategory } from "./types";
@@ -70,18 +77,22 @@ export function AddDateDialog() {
 					</div>
 					<div className="space-y-2">
 						<Label htmlFor="date-category">Category</Label>
-						<select
-							id="date-category"
+						<Select
 							value={category}
-							onChange={(e) => setCategory(e.target.value as DateCategory)}
-							className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+							onValueChange={(value) => setCategory(value as DateCategory)}
 						>
-							{DATE_CATEGORIES.map((cat) => (
-								<option key={cat} value={cat}>
-									{cat.charAt(0).toUpperCase() + cat.slice(1)}
-								</option>
-							))}
-						</select>
+							{/* pr-2 gives the chevron the requested 8px gap to the border */}
+							<SelectTrigger id="date-category" className="h-10 w-full rounded-lg pr-2">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{DATE_CATEGORIES.map((cat) => (
+									<SelectItem key={cat} value={cat}>
+										{cat.charAt(0).toUpperCase() + cat.slice(1)}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 					</div>
 					<div className="flex items-center gap-2">
 						<Checkbox
