@@ -13,11 +13,11 @@ export function TodoCard() {
 	const recentActive = activeTodos.slice(0, 5);
 
 	return (
-		<div className="glass-card rounded-xl overflow-hidden h-full">
+		<div className="glass-card rounded-xl overflow-hidden h-full flex flex-col">
 			{/* Top accent gradient */}
 			<div className="h-1 bg-gradient-to-r from-terracotta via-coral to-terracotta/50" />
 
-			<div className="p-5">
+			<div className="p-5 flex flex-1 flex-col">
 				<div className="flex items-center justify-between mb-4">
 					<div className="flex items-center gap-2.5">
 						<div className="h-8 w-8 rounded-lg bg-coral-light dark:bg-coral/10 flex items-center justify-center">
@@ -52,13 +52,16 @@ export function TodoCard() {
 					</p>
 				)}
 
-				<Link
-					to="/todos"
-					className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 mt-4 pt-3 border-t border-border/50 transition-colors group"
-				>
-					View all todos
-					<ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
-				</Link>
+				{/* mt-auto pins the link to the card bottom so both cards align */}
+				<div className="mt-auto pt-4">
+					<Link
+						to="/todos"
+						className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 pt-3 border-t border-border/50 transition-colors group"
+					>
+						View all todos
+						<ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+					</Link>
+				</div>
 			</div>
 		</div>
 	);
