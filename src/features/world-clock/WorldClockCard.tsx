@@ -66,7 +66,7 @@ function ClockDisplay({ zone, index }: { zone: ClockZone; index: number }) {
 	const accent = ZONE_ACCENTS[index % ZONE_ACCENTS.length];
 
 	return (
-		<div className={`rounded-lg p-2.5 transition-all duration-300 overflow-hidden ${accent.bg} hover:scale-[1.02]`}>
+		<div className={`rounded-lg p-2.5 transition-all duration-300 min-w-0 overflow-hidden ${accent.bg} hover:scale-[1.02]`}>
 			<div className="flex items-center justify-between gap-1 mb-1">
 				<span className={`text-[11px] font-semibold truncate ${accent.text}`}>
 					{zone.city}
@@ -77,7 +77,7 @@ function ClockDisplay({ zone, index }: { zone: ClockZone; index: number }) {
 					<Moon className="h-3 w-3 shrink-0 text-indigo-400 dark:text-indigo-300" />
 				)}
 			</div>
-			<p className="text-lg font-mono font-bold tabular-nums leading-tight text-foreground">
+			<p className="text-lg font-mono font-bold tabular-nums leading-tight whitespace-nowrap text-foreground">
 				{timeStr}
 			</p>
 			<div className="flex items-center justify-between gap-1 mt-1">
@@ -107,7 +107,8 @@ export function WorldClockCard() {
 					<h3 className="font-semibold tracking-tight">World Clock</h3>
 				</div>
 
-				<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+				{/* Column count follows the card's width, not the viewport's: the card is only 1/3 of the page at lg, so viewport breakpoints left tiles too narrow for the digits. 7.5rem fits text-lg HH:MM:SS plus padding. */}
+					<div className="grid grid-cols-[repeat(auto-fit,minmax(7.5rem,1fr))] gap-2">
 					{CLOCK_ZONES.map((zone, i) => (
 						<ClockDisplay key={zone.timezone} zone={zone} index={i} />
 					))}
