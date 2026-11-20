@@ -1,0 +1,213 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Documentation - AI Training Guide">
+	<PageShell chapterId="development" subChapterId="documentation">
+		<div class="prose space-y-6">
+			<p>
+				Documentation isn't just for humans anymore. Every piece of documentation you write
+				serves double duty: it helps the next developer who touches the code, and it helps
+				the AI understand your project when it's asked to make changes. Good documentation
+				has always been valuable. With AI tools, it's become one of our most important activities.
+			</p>
+
+			<p>
+				Earlier in the guide we recommended{" "}
+				<a href="/requirements-gathering/documentation-first-development" class="text-teal-600 hover:text-teal-800">documentation-first development</a>: write the docs before the code, and let the docs in your <code>docs/</code> folder be the source of truth that both people and AI build from. This page is the other half of that habit. Documentation-first is how the docs get created; what follows is how you keep them alive while you write code, so they stay accurate enough to be worth reading on the next task.
+			</p>
+
+			<h3>Why Documentation Matters More Now</h3>
+
+			<p>
+				When you ask an AI to modify a codebase, it reads whatever context it can find.
+				If your code has clear comments explaining <em>why</em> something works a certain way,
+				the AI is far less likely to break it. If your architecture decisions are documented
+				somewhere the AI can reach, it produces code that fits the existing patterns instead
+				of inventing its own.
+			</p>
+
+			<p>
+				Think about what happens without documentation. A developer asks the AI to add a new
+				feature. The AI scans the code, makes assumptions about why things are structured the
+				way they are, and writes something that technically works but doesn't match the team's
+				approach. The developer spends 30 minutes in code review catching issues that a single
+				paragraph of context would have prevented.
+			</p>
+
+			<Callout variant="success" title="Multiplying Effect">
+				<p>
+					Documentation you write once gets used by the AI in every conversation. A 10-minute
+					investment in writing a clear approach document saves time across dozens of AI
+					interactions, for every developer on the team.
+				</p>
+			</Callout>
+
+			<h3>What to Document</h3>
+
+			<p>
+				Not all documentation is equally useful for AI-assisted development. Focus on the
+				types that have the biggest impact on AI output quality.
+			</p>
+
+			<div class="space-y-4 my-8">
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-stone-800 mb-1">
+						Architecture decisions
+					</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						Why did you choose this database? Why is authentication handled in middleware
+						instead of per-route? Why does the billing module have its own API client?
+						These "why" documents prevent the AI from making changes that look reasonable
+						in isolation but conflict with deliberate design choices. These are Architecture
+						Decision Records, and in a documentation-first repo they live in{" "}
+						<code>docs/decisions/</code>. They are some of the highest-value context you can
+						give an AI, because they encode the constraints it must not violate.
+					</p>
+				</div>
+
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-stone-800 mb-1">
+						Approach documents
+					</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						Short documents that describe how a particular feature or system works at a high
+						level. "The notification system uses a pub/sub pattern. Events are published to
+						a central bus and individual handlers subscribe to specific event types." This
+						gives the AI enough context to add a new notification type without reading
+						every file in the system. In a documentation-first repo these are your feature
+						specs and tech notes, living in <code>docs/features/</code> and <code>docs/tech/</code>.
+					</p>
+				</div>
+
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-stone-800 mb-1">
+						Code comments on non-obvious logic
+					</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						You don't need to comment every line. But when something looks wrong but is
+						actually intentional, a comment saves the AI (and future developers) from
+						"fixing" it. <code>// Intentionally using setTimeout(0) to defer to next tick
+						for DOM measurement</code> prevents a well-meaning cleanup.
+					</p>
+				</div>
+
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-stone-800 mb-1">
+						API contracts and data shapes
+					</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						TypeScript types help a lot here, but a brief description of what each API
+						endpoint expects and returns, especially edge cases, helps the AI write
+						code that handles real-world scenarios instead of just the happy path.
+					</p>
+				</div>
+			</div>
+
+			<h3>What Not to Over-Document</h3>
+
+			<p>
+				There's a balance. Documentation that restates what the code already says clearly
+				is noise, and noise in the context window pushes out useful information.
+			</p>
+
+			<Callout variant="warning" title="Skip these">
+				<ul class="space-y-1 list-none p-0 m-0">
+					<li>
+						<span class="font-bold">-</span> Comments that restate the code:{" "}
+						<code>// increment counter</code> above <code>counter++</code>
+					</li>
+					<li>
+						<span class="font-bold">-</span> Auto-generated JSDoc that just repeats
+						parameter names without adding meaning
+					</li>
+					<li>
+						<span class="font-bold">-</span> Changelog-style comments inside files - leave this in Git
+					</li>
+					<li>
+						<span class="font-bold">-</span> Documentation of every possible
+						configuration option when sensible defaults exist
+					</li>
+				</ul>
+			</Callout>
+
+			<h3>When a Skill Is the Better Home</h3>
+
+			<p>
+				Not every recurring piece of knowledge belongs in a static document. A doc
+				describes how something works; a{" "}
+				<a href="/requirements-writing/skills" class="text-teal-600 hover:text-teal-800">skill</a>{" "}
+				tells the AI how to carry out a task the same way every time. When you catch
+				yourself pasting the same instructions into prompt after prompt ("here's how we
+				write a migration," "here's the shape of a new API route"), that repetition is the
+				signal to promote it from a doc into a skill.
+			</p>
+
+			<p>
+				The difference that matters is loading. A document sits in <code>docs/</code> until
+				someone points the AI at it, while a skill's description tells the AI when to pull
+				it in on its own, so the procedure shows up exactly when the matching task comes up
+				and stays out of the context window the rest of the time. Reach for a skill when the
+				knowledge is a repeatable procedure; keep it in a doc when it's reference material or
+				the reasoning behind a decision.
+			</p>
+
+			<h3>Using AI to Write Documentation</h3>
+
+			<p>
+				AI is excellent at writing documentation for existing code.
+				You can point it at a module and ask it to explain the architecture, describe the
+				data flow, or summarize the public API. The AI reads code much faster than you do,
+				and it can produce a solid first draft of documentation in seconds.
+			</p>
+
+			<p>
+				Key word: <strong>first draft</strong>. AI-written documentation needs review
+				just like AI-written code. The AI might miss the "why" behind decisions (it can see
+				what the code does, not why you chose that approach). It might describe behavior
+				that's actually a bug rather than intentional. And it tends to be more verbose than
+				necessary.
+			</p>
+
+			<Callout variant="example" title="Good prompt for documentation">
+				<p class="font-mono">
+					"Based on what was written in this ticket, and the work done in this PR, update the API documentation at docs/api.md. Make sure to include the why behind the decisions and keep it short and sweet."
+				</p>
+			</Callout>
+
+			<p>
+				Notice what the prompt does: it points the AI at concrete sources (the ticket and
+				the PR) so the draft is grounded in what actually changed, asks it to capture the
+				why behind the decisions rather than just restating behavior, and tells it to keep
+				things short. You still review the result, but you start from an accurate, grounded
+				draft instead of a blank page.
+			</p>
+
+			<h3>Documentation as a Feedback Loop</h3>
+
+			<p>
+				Here's a pattern that works well: after the AI completes a task, ask it to update
+				the relevant documentation. "You just added the webhook handler. Update
+				docs/notifications.md to include how webhooks fit into the notification system."
+				The AI has all the context fresh, so the documentation it produces is accurate and
+				specific.
+			</p>
+
+			<p>
+				Over time, this creates a self-reinforcing cycle. Better documentation leads to
+				better AI output, which leads to less time fixing AI mistakes, which leaves more
+				time for documentation. The teams that invest in this loop early see compounding
+				returns as the codebase grows.
+			</p>
+
+			<Callout variant="tip" title="Practical tip">
+				<p>
+					Make "update the docs" part of your definition of done for any task. It only takes a couple minutes to update documentation. That small investment pays dividends
+					across every future AI interaction with that part of the codebase.
+				</p>
+			</Callout>
+		</div>
+	</PageShell>
+</MainLayout>

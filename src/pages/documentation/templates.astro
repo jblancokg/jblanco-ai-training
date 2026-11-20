@@ -1,0 +1,427 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Documentation Templates - AI Training Guide">
+	<PageShell chapterId="documentation" subChapterId="templates">
+		<div class="prose space-y-6">
+			<p>
+				Templates remove the friction that stops people from writing documentation.
+				They also provide a structure for the AI to follow when writing documentation drafts.
+			</p>
+
+			<p>
+				The templates below follow industry standards where they exist (like ADRs)
+				and practical patterns we've found effective for AI-assisted teams. Customize these to your team's needs.
+			</p>
+
+			<p>
+				Consistency is what makes a folder of docs readable by tooling. On top of the
+				per-type structures below, it helps to give every document the same small header.
+				Google's{" "}
+				<a href="https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md" target="_blank" rel="noopener noreferrer" class="text-teal-600 hover:text-teal-800">Open Knowledge Format (OKF)</a>{" "}
+				is a minimal, tool-agnostic convention for exactly this: a directory of markdown
+				files, each opening with a short YAML frontmatter block (the one required field is{" "}
+				<code>type</code>). Any OKF-aware tool can then read your docs without repo-specific
+				knowledge. The{" "}
+				<a href="/requirements-gathering/documentation-first-development" class="text-teal-600 hover:text-teal-800">documentation-first chapter</a>{" "}
+				covers the frontmatter fields in detail.
+			</p>
+
+			<h3>The Shared Header (Frontmatter)</h3>
+
+			<p>
+				Every concept doc opens with the same block. The AI reads it to decide whether a
+				file is relevant before opening the whole thing, so keep the <code>description</code>{" "}
+				to a single useful sentence.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+					Frontmatter
+				</div>
+				<div class="font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`---
+type: decision            # required. Pick a small, fixed vocabulary
+title: Stateless BFF sessions
+description: One sentence. This is what a folder index quotes.
+status: accepted          # values depend on type (see below)
+timestamp: 2026-05-28     # ISO date of the last meaningful change
+owner: your-handle
+tags: [auth, sessions]
+---`}</div>
+			</div>
+
+			<p>
+				<code>type</code> is free-text in OKF, but agree on a small closed set and stick to
+				it: <code>decision</code>, <code>feature</code>, <code>guide</code>,{" "}
+				<code>workflow</code>, <code>tech</code>, <code>external</code>. The <code>status</code>{" "}
+				vocabulary depends on the type:
+			</p>
+
+			<div class="overflow-x-auto my-8">
+				<table class="w-full text-sm border-collapse">
+					<thead>
+						<tr class="border-b border-stone-300">
+							<th class="text-left py-2 pr-4 font-semibold text-stone-800">Type</th>
+							<th class="text-left py-2 font-semibold text-stone-800">Status values</th>
+						</tr>
+					</thead>
+					<tbody class="text-stone-600">
+						<tr class="border-b border-stone-200">
+							<td class="py-2 pr-4 font-medium text-stone-700">decision</td>
+							<td class="py-2">proposed, accepted, superseded, deprecated</td>
+						</tr>
+						<tr class="border-b border-stone-200">
+							<td class="py-2 pr-4 font-medium text-stone-700">feature</td>
+							<td class="py-2">draft, proposed, approved, in-progress, shipped, deprecated</td>
+						</tr>
+						<tr class="border-b border-stone-200">
+							<td class="py-2 pr-4 font-medium text-stone-700">guide, tech, workflow</td>
+							<td class="py-2">draft, active, deprecated</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<p>
+				Two more conventions keep a bundle navigable. For <strong>naming</strong>, numbered
+				types (decisions, features, workflows) use a zero-padded prefix like{" "}
+				<code>0001-stateless-bff-sessions.md</code>; slug types (tech, guides, external) use
+				kebab-case. For <strong>cross-links</strong>, link related docs by path rather than
+				by name, for example <code>[ADR-0004](/decisions/0004-api-versioning.md)</code>, and
+				put those same paths in relationship fields like <code>decisions:</code> on a feature.
+			</p>
+
+			<h3>Architecture Decision Record (ADR)</h3>
+
+			<p>
+				ADRs are a well-established format for recording technical decisions. The key
+				sections are what was decided, why, and what alternatives were considered.
+				These are short documents, typically under a page. For more on the ADR format,
+				see <a href="https://adr.github.io/" target="_blank" rel="noopener">adr.github.io</a>.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+					ADR Template
+				</div>
+				<div class="font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`---
+type: decision
+title: <decision in a short noun phrase>
+description: <one sentence: the rule that resulted>
+status: proposed        # proposed | accepted | superseded | deprecated
+timestamp: 2026-05-28
+owner: your-handle
+tags: []
+---
+
+# <Title>
+
+## Context
+What forces are at play? What problem or constraint prompted this?
+
+## Decision
+What we decided, stated plainly.
+
+## Consequences
+What becomes easier, harder, or newly required. Trade-offs accepted.
+
+## Alternatives considered
+- <Option>: why not.`}</div>
+			</div>
+
+			<p>
+				Here is the same template filled in on a real project. Notice how much of the value
+				is in the "why", the constraints, and the options that were rejected. That is the
+				context an AI cannot reconstruct from the code.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+					Filled example: ADR-0001
+				</div>
+				<div class="font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`---
+type: decision
+title: Stateless, cookie-based BFF sessions
+description: BFF sessions are stateless, signed cookies (iron-session), no server-side store.
+status: accepted
+timestamp: 2026-05-28
+owner: mvalstar
+tags: [auth, bff, sessions]
+---
+
+# Stateless, cookie-based BFF sessions
+
+## Context
+Each Next.js app acts as a BFF in front of the shared Spring Boot API. We
+need session handling on the BFF, but want to avoid running a shared session
+store (Redis) for an early-phase, two-frontend system.
+
+## Decision
+Sessions are stateless: the BFF stores signed/encrypted session state in a
+cookie (iron-session) rather than a server-side store. The session cookie is
+SameSite=Strict; the auth-callback handoff uses a short-lived SameSite=Lax
+cookie that is immediately swapped for the Strict session cookie.
+
+## Consequences
+- No Redis / shared store to run, scale, or secure.
+- Horizontal scaling is trivial: any BFF instance can serve any request.
+- Cookie size budget must be respected; large session payloads are out.
+- CSRF strategy for cookie-based sessions remains an open question.
+
+## Alternatives considered
+- Server-side sessions (Redis): more infra to run; unnecessary at this scale.
+- better-auth: pulls in more than a pure session-token use case needs.`}</div>
+			</div>
+
+			<h3>Feature Approach Document</h3>
+
+			<p>
+				Feature docs describe how a feature works and are the source of truth for what you
+				are building. They are useful for onboarding (both humans and AI) and for agreeing on
+				the design before implementation starts. Link the ADRs that constrain the feature so
+				the AI reads them together.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+					Feature Doc Template
+				</div>
+				<div class="font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`---
+type: feature
+title: <feature name>
+description: <one sentence: what this feature is>
+status: draft           # draft | proposed | approved | in-progress | shipped
+timestamp: 2026-05-28
+owner: your-handle
+tags: []
+decisions: []           # related ADR paths, e.g. [/decisions/0001-sessions.md]
+---
+
+# <Feature name>
+
+## Summary
+One paragraph: what this feature is and who it's for.
+
+## Goals / non-goals
+- Goals: ...
+- Non-goals: ...
+
+## Behavior
+The source-of-truth description of how it works, user-facing and system
+behavior. Specific enough that backend and frontend can build from it.
+
+## API surface
+Endpoints, request/response shapes, and error cases.
+
+## Data
+Tables, migrations, and key fields.
+
+## Open questions
+- ...`}</div>
+			</div>
+
+			<h3>Runbook</h3>
+
+			<p>
+				Runbooks are step-by-step guides for operational tasks. They're written for the
+				person (or AI) who needs to do something right now, possibly under pressure.
+				Keep them direct and action-oriented. In a docs bundle these are <code>type: guide</code>.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+					Runbook Template
+				</div>
+				<div class="font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`---
+type: guide
+title: <task or scenario>
+description: <one sentence: the situation this addresses>
+status: active          # draft | active | deprecated
+timestamp: 2026-05-28
+owner: your-handle
+tags: []
+---
+
+# Runbook: <Task or Scenario>
+
+## When to use
+What situation triggers this runbook.
+
+## Prerequisites
+Access, tools, or permissions needed.
+
+## Steps
+Numbered, specific steps. Include exact commands where applicable.
+
+## Verification
+How to confirm the task completed successfully.
+
+## Troubleshooting
+Common failures and how to resolve them.
+
+## Escalation
+Who to contact if this doesn't work.`}</div>
+			</div>
+
+			<h3>Workflow</h3>
+
+			<p>
+				Workflow docs model a domain process: the states something moves through and the
+				transitions between them. They give the AI (and reviewers) a single place to check
+				before touching state-machine logic. A state diagram, for example in Mermaid, reads
+				well alongside the tables.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+					Workflow Template
+				</div>
+				<div class="font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`---
+type: workflow
+title: <workflow name>
+description: <one sentence: the process this models>
+status: active          # draft | active | deprecated
+timestamp: 2026-05-28
+owner: your-handle
+tags: []
+features: []            # related feature paths
+---
+
+# <Workflow name>
+
+## Purpose
+What process this models and when it runs.
+
+## States
+| State | Meaning |
+|-------|---------|
+| ...   | ...     |
+
+## Transitions
+For each transition: trigger, actor, guard conditions, and side effects
+(events emitted, notifications sent).`}</div>
+			</div>
+
+			<h3>API Endpoint Documentation</h3>
+
+			<p>
+				API contracts often live inside a feature doc's "API surface" section, and many
+				teams generate them from code annotations instead of writing them by hand. When you
+				do keep a standalone reference, this structure works:
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+					API Doc Template
+				</div>
+				<div class="font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`# <Endpoint Name>
+Method: GET | POST | PUT | DELETE
+Path:   /api/v1/...
+Auth:   Required | Public
+
+## Description
+What this endpoint does and when to use it.
+
+## Request
+Headers, query params, and body shape with types.
+
+## Response
+Success and error response shapes with status codes.
+
+## Error Cases
+Known error scenarios and what causes them.`}</div>
+			</div>
+
+			<h3>Test Plan</h3>
+
+			<p>
+				Test plans describe what to test and how, so the AI generates meaningful tests
+				rather than boilerplate. They can stand alone or live next to the feature doc.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+					Test Plan Template
+				</div>
+				<div class="font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`# Test Plan: <Feature Name>
+
+## Scope
+What's being tested and what's out of scope.
+
+## Test Scenarios
+The key user flows and edge cases to cover, grouped by area.
+
+## Environment
+Setup requirements, test data, and dependencies.
+
+## Acceptance Criteria
+What "passing" looks like for this feature.`}</div>
+			</div>
+
+			<h3>Record Your Conventions</h3>
+
+			<p>
+				The templates only stay consistent if the rules behind them are written down. Keep a
+				short conventions guide in your docs folder that defines your frontmatter fields,
+				your <code>type</code> and <code>status</code> vocabularies, and your naming and
+				cross-link rules. Then record the choice of format itself as an ADR, so the next
+				person, and the next AI session, knows the docs follow a standard and why. A{" "}
+				<code>_template.md</code> in each folder that people copy is the cheapest way to keep
+				new docs in shape.
+			</p>
+
+			<h3>Turning Templates into Skills</h3>
+
+			<p>
+				A template sitting in a docs folder is useful. A template encoded as an AI skill
+				is more useful because it gets applied automatically. When you build a skill
+				for a document type, the AI produces a properly structured document every time
+				someone triggers it, with no need to look up or copy the template.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+					Example: ADR skill (SKILL.md)
+				</div>
+				<div class="font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`---
+name: adr-writer
+description: Create Architecture Decision Records. Use when the user
+  asks to document a technical decision, create an ADR, or record why
+  a specific approach was chosen.
+---
+
+# ADR Writer
+
+Write an Architecture Decision Record by copying the template in
+docs/decisions/_template.md. Before writing, ask clarifying questions
+to understand the decision context if it's not already clear.
+
+## Steps
+
+1. Check docs/decisions/ for the latest ADR number and increment it
+2. Ask the user about the context, alternatives considered, and
+   reasoning if not already provided
+3. Fill in the frontmatter and body from the template
+4. Save as docs/decisions/NNNN-[slug].md
+5. Add a row to docs/decisions/index.md`}</div>
+			</div>
+
+			<p>
+				See <a href="/requirements-writing/skills">Skills</a> for a walkthrough of
+				how to build and manage skills for your team.
+			</p>
+
+			<Callout variant="tip" title="Practical tip">
+				<p>
+					Don't over-engineer your templates. A template with 20 sections will feel
+					like a chore to fill in and most sections will be left empty. Start with the
+					minimum viable structure and add sections only when you repeatedly find
+					yourself needing them. Five good sections beat fifteen empty ones.
+				</p>
+			</Callout>
+		</div>
+	</PageShell>
+</MainLayout>

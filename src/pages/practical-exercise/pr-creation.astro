@@ -1,0 +1,155 @@
+---
+import Callout from "../../components/Callout.astro";
+import { GhCommandTrace } from "../../components/GhCommandTrace";
+import PageShell from "../../components/PageShell.astro";
+import TerminalBlock from "../../components/TerminalBlock";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="PR Creation with AI - AI Training Guide">
+  <PageShell chapterId="practical-exercise" subChapterId="pr-creation">
+    <div class="prose space-y-6">
+      <p>
+        In this next exercise, you'll leverage the GitHub CLI and AI to follow a structured workflow and create a high-quality pull request for the habit tracker feature you created in the previous lesson. 
+      </p>
+
+      <!-- Section 1: Conventional Commits Skill -->
+      <section>
+        <h2 class="text-xl font-bold text-stone-800 mb-4">1. Conventional Commits Skill</h2>
+        <p>
+          In the <a href="/practical-exercise/first-commit">First Commit</a> lesson, you may have added the <strong>Conventional Commits</strong> skill to your project. This skill ensures your commit messages follow a consistent, machine-readable format that helps both humans and AI understand the project's history.
+        </p>
+
+        <p>
+          If you haven't installed it yet, we recommend you follow the instructions from <a href="/practical-exercise/first-commit" class="text-teal-600 hover:text-teal-800 underline font-medium">Step 1 in the First Commit lesson</a>.
+        </p>
+
+        <Callout variant="info" title="Why it matters">
+          <p>
+            When the AI creates a PR, it will read your recent commit history. Using Conventional Commits gives the AI structured "why" context for every change you've made, resulting in much more accurate PR summaries.
+          </p>
+        </Callout>
+      </section>
+
+      <!-- Section 2: Build a PR Creation Skill -->
+      <section>
+        <h2 class="text-xl font-bold text-stone-800 mb-4">2. Build a PR Creation Skill</h2>
+        <p>
+          Now, you'll use the <code>skill-creator</code> skill once more to build a <strong>PR Creation</strong> skill. This skill will automate the process of opening a Pull Request using the GitHub CLI (<code>gh</code>).
+        </p>
+
+        <p class="mb-4">
+          The goal of this skill is to generate a high-quality PR description that includes:
+        </p>
+
+        <ul class="list-disc pl-5 space-y-2 text-stone-600 mb-4">
+          <li><strong>PR Title:</strong> A concise, conventional-style title.</li>
+          <li><strong>Summary of Changes:</strong> A bulleted list of what was changed and why.</li>
+          <li><strong>Testing Procedure:</strong> The most critical section. It must provide clear, manual steps someone can follow to verify the feature works and optionally reference related requirements or task files.</li>
+        </ul>
+
+        <p>
+          Feel free to add some additional requirements such as:
+        </p>
+          
+        <ul class="list-disc pl-5 space-y-2 text-stone-600 mt-4 mb-4">
+          <li>Summarize intelligently (don't copy commits)</li>
+          <li>Be clever and reviewer-friendly</li>
+          <li>Note assumptions if needed</li>
+        </ul>
+
+        <div class="my-6">
+          <TerminalBlock
+            title="Example Prompt"
+            lines={[
+              { 
+                type: "command", 
+                command: 'Create a "PR Creation" skill: analyze recent commits and the diff between the current branch and its base branch, generate a concise (conventional-style) PR title, and generate a PR body.\n\nThe PR body should contain a summary of changes (key changes + why) and a testing procedure (required).\n\nThe testing procedure should have step-by-step manual verification, include expected results, and link relevant docs if applicable.\n\nThen run: `gh pr create` ' 
+              },
+            ]}
+            client:visible
+          />
+        </div>
+
+        <Callout variant="warning" title="Testing Procedures are Critical">
+          <p>
+            A PR without a testing procedure is incomplete. The AI should generate steps that are <strong>verifiable by a human</strong>. If the AI doesn't know how to test something, it should ask you for the steps before finalizing the PR description.
+          </p>
+        </Callout>
+        
+
+        <p>
+          <strong>Review the skill</strong> once completed and update as you see fit before proceeding.
+        </p>
+      </section>
+
+      <!-- Section 3: Using the PR Skill -->
+      <section>
+        <h2 class="text-xl font-bold text-stone-800 mb-4">3. Using the PR Skill</h2>
+        <p class="mb-4">
+          Once your skill is ready, you can trigger it with a simple prompt. Ensure your changes to complete the habit tracker feature are committed and pushed before running the skill.
+        </p>
+
+        <TerminalBlock
+          title="PR Creation Workflow"
+          lines={[
+            { type: "comment", text: "# Add and commit latest changes in prompt mode" },
+            { type: "command", command: "git add . && gemini -p 'Commit my changes'" },
+            { type: "comment", text: "# Push changes" },
+            { type: "command", command: "git push -u origin HEAD" },
+            { type: "comment", text: "# Trigger your PR skill" },
+            { type: "command", command: "gemini 'Create a PR for this branch using the PR creation skill.'" },
+          ]}
+          client:visible
+        />
+
+        <p class="mt-4">
+          Here is a simplified overview of how AI uses the skill you built to generate a PR based off of changes and commits. 
+        </p>
+
+        <GhCommandTrace client:visible />
+
+        <p class="mt-4">
+          The AI will read your commits, draft the description (including the testing steps), and use the <code>gh</code> CLI to create the PR on GitHub.
+        </p>
+      </section>
+
+      <!-- Section 4: Reviewing the PR in GitHub -->
+      <section>
+        <h2 class="text-xl font-bold text-stone-800 mb-4">4. Reviewing the PR in GitHub</h2>
+        <p>
+          After the AI confirms the PR is created, open the link in your browser and review it as if you were the reviewer. Pay close attention to:
+        </p>
+
+        <ul class="list-disc pl-5 space-y-4 text-stone-600 my-4 mb-4">
+          <li><strong>The Code Diff:</strong> Important to review this in the GitHub UI and not just locally. The AI-generated code can introduce subtle issues so look for unintended edits, extra changes, and incorrect assumptions.</li>
+          <li><strong>The Testing Procedure:</strong> Read the steps as if you have <strong>no prior context</strong>. Could someone unfamiliar with this feature follow these steps and verify it works? Ensure steps are explicit, reproducible, and include expected outcomes.</li>
+          <li><strong>The Description:</strong> Confirm the description clearly explains <strong>what changed and why</strong> and it properly reflects the actual implementation (no hallucination of intent).</li>
+        </ul>
+
+        <p>
+          Even if the AI generated the code, you’re still responsible for it. You should feel just as confident in its correctness and efficiency as you would if you had written it yourself. That’s why the review step is just as important (if not more so) than any other part of the process.
+        </p>
+      </section>
+
+      <!-- Learning Objective -->
+      <section class="border-t border-stone-200 pt-8 mt-8">
+        <p class="mb-4">
+          This exercise brings together several core concepts we covered:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-stone-600 mb-4">
+          <li><strong>AI Skills:</strong> Creating reusable skills for complex workflows.</li>
+          <li><strong>CLI Tools:</strong> Extending AI capabilities with powerful tools like <code>gh</code>.</li>
+          <li><strong>Git Workflow:</strong> Using version control as a source of truth for AI context.</li>
+          <li><strong>Verification:</strong> Using AI for structure and formatting while <strong>you</strong> verify accuracy and intent.</li>
+        </ul>
+        <p>
+          The expectation is that you will create PRs for each new feature you develop using the new PR creation skill. 
+        </p>
+        <p>
+          Next we will implement the notes feature using the AI's <strong>plan</strong> mode before commencing development.
+        </p>
+      </section>
+    </div>
+  </PageShell>
+</MainLayout>

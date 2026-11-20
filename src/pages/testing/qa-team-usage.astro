@@ -1,0 +1,92 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="QA Team Usage - AI Training Guide">
+	<PageShell chapterId="testing" subChapterId="qa-team-usage">
+		<div class="prose space-y-6">
+			<p>
+				QA team members have a full picture of the product. They know which features interact, which areas are fragile,
+				and what users actually do. When QA combines that project-wide awareness with AI's ability to generate scenarios quickly, testing can be done faster and more effectively.
+			</p>
+
+			<h3>Discovering Edge Cases</h3>
+
+			<p>
+				Start by describing the feature to the AI and asking it to find edge cases. Ideally you have access to the codebase to see the implementation, but this is not required. A clear description of
+				the feature's behavior is enough for the AI to identify scenarios that are easy to overlook.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Example prompt</div>
+				<p class="font-mono text-sm text-stone-700 leading-relaxed">
+					We have a scheduling feature where users can book time slots. Here are the requirements for the feature: [link to requirements]. What edge cases should I test that are easy to miss?
+				</p>
+			</div>
+
+			<p>
+				The AI will typically surface cases like timezone boundary crossings, daylight saving transitions, overlapping bookings from concurrent users, and
+				what happens when a user's timezone changes mid-session. 
+			</p>
+
+			<h3>Building Test Plans from Requirements</h3>
+
+			<p>
+				If your requirements live in Jira, Confluence, or similar tools, you can feed them directly to the AI to generate test plans. Point the AI at the
+				ticket or page and ask it to produce test scenarios based on the acceptance criteria.
+			</p>
+
+			<p>
+				This works best when you give the AI more than just the single ticket. Include related requirements, the broader epic description, or links to
+				design documents. The more context the AI has about how the feature fits into the product, the better the test plan will be.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Example prompt</div>
+				<p class="font-mono text-sm text-stone-700 leading-relaxed">
+					Here are the requirements for the new notification preferences feature [link to Confluence page]. Generate a test plan covering all the acceptance
+					criteria. Include positive and negative scenarios, and flag any requirements that seem ambiguous or incomplete.
+				</p>
+			</div>
+
+			<p>
+				Asking the AI to flag ambiguous requirements is especially useful. The AI will often catch gaps like "what happens if the user has
+				no email address?" or "the requirement says 'recently viewed' but doesn't define a time window." These are things that often surface during testing, but catching them earlier saves time.
+			</p>
+
+			<h3>Using Your Judgment</h3>
+
+			<p>
+				The AI generates test plans quickly, but it does not know your product the way you do. It will miss scenarios that depend on understanding how users
+				actually behave, which integrations are flaky, or which features have a history of breaking after releases.
+			</p>
+
+			<p>
+				Review every AI-generated test plan with your own lens. Add the scenarios you know matter. Remove the ones that are irrelevant. 
+				The AI gives you a strong first draft; your job is to shape it into something that can be done in a reasonable amount of time and is most effective.
+			</p>
+
+			<Callout variant="tip" title="Practical tip">
+				<p>
+					Build a template for your test plans and give it to the AI as a reference. This way the output is already in your team's format and can go
+					straight into your test management tool without reformatting. See the{" "}
+					<a href="/documentation/templates">Templates</a> section for more on this approach.
+				</p>
+			</Callout>
+
+			<h3>Regression Testing</h3>
+
+			<p>
+				When a bug is found, ask the AI to suggest related areas that might be affected. "We found a bug where discount codes don't apply to subscription
+				items. What other areas of the checkout flow should we re-test?" The AI can trace through related features and suggest regression scenarios faster
+				than you can manually audit the impact.
+			</p>
+
+			<p>
+				This does not replace a structured regression suite, but it helps you decide where to focus your attention when time is limited.
+			</p>
+		</div>
+	</PageShell>
+</MainLayout>

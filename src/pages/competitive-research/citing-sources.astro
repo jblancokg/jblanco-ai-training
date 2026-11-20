@@ -1,0 +1,89 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import { SourceVerificationChallenge } from "../../components/SourceVerificationChallenge";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Citing Sources - AI Training Guide">
+  <PageShell
+    chapterId="competitive-research"
+    subChapterId="citing-sources"
+  >
+    <div class="prose space-y-6">
+      <p>
+        One of the simplest things you can do to improve the quality of AI
+        output is to ask it to cite its sources. Most AI tools won't include
+        references unless you explicitly request them.
+      </p>
+
+      <h3>Ask for Sources Every Time</h3>
+
+      <p>
+        Adding "cite your sources" or "include source URLs" to your prompts
+        is a quick and easy way to
+        verify what the AI is telling you. This applies well beyond
+        research. Asking about a technical approach? Request the docs it's
+        referencing. Getting architecture advice? Ask where the best
+        practice comes from. Writing up a competitive comparison? Ask for
+        links to the pages it's pulling from.
+      </p>
+
+      <p>
+        Sources turn AI output from "trust me" into "here's where I got
+        this," which makes it much easier to build on with confidence.
+      </p>
+
+      <Callout variant="info" title="Add to your skills">
+        <p>
+          Consider adding a line like <span class="italic">"Always cite sources
+          with URLs where possible"</span> to your reusable skills and
+          templates. That way every prompt benefits from source tracking
+          without you needing to remember to ask each time.
+        </p>
+      </Callout>
+
+      <SourceVerificationChallenge client:visible />
+
+      <h3>Verify Before You Share</h3>
+
+      <p>
+        When the AI gives you sources, treat them as leads to follow up on.
+        Open the links, confirm the page exists, and check that it says what
+        the AI claims. Most of the time things will check out, especially
+        with web-enabled tools, but occasionally you'll find a link that's
+        outdated or doesn't quite match. A quick spot-check before including
+        anything in a deliverable keeps you covered.
+      </p>
+
+      <Callout variant="warning" title="Web access doesn't fix citations">
+        <p>
+          It's tempting to assume a tool that searches the web gets its
+          sources right. A 2025 Columbia Journalism Review{" "}
+          <a href="https://www.cjr.org/tow_center/we-compared-eight-ai-search-engines-theyre-all-bad-at-citing-news.php" target="_blank" rel="noopener noreferrer" class="underline">study</a>{" "}
+          tested eight AI search engines and found they cited the wrong or a
+          fabricated source more than 60% of the time. Even the best performer,
+          Perplexity, was wrong 37% of the time, and paid tiers were often more
+          confidently wrong, not less. Tools without web access will invent
+          plausible URLs outright. Either way the rule is the same: click
+          through and confirm before you rely on a source, whether you're using
+          ChatGPT, Claude, Gemini, or Perplexity.
+        </p>
+      </Callout>
+
+      <h3>Beyond Research</h3>
+
+      <p>
+        Asking for citations is useful any time the AI is making factual
+        claims. Writing documentation? Ask it to link to the API docs.
+        Evaluating a library? Ask for the GitHub repo and changelog.
+        Summarizing a competitor's positioning? Ask for the specific pages
+        it's referencing. The habit of requesting sources makes all of your
+        AI-assisted work easier to verify and builds a trail of references
+        you can come back to later.
+      </p>
+
+     
+    </div>
+  </PageShell>
+</MainLayout>

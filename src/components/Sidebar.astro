@@ -1,0 +1,170 @@
+---
+import { CHAPTERS, getUrlForNavItem, TRACK_META } from "../data/chapters";
+
+interface Props {
+	currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+function getActiveFromUrl(pathname: string): { chapterId: string; subChapterId?: string } {
+	const parts = pathname.split("/").filter(Boolean);
+	if (parts.length >= 2) return { chapterId: parts[0], subChapterId: parts[1] };
+	if (parts.length === 1) return { chapterId: parts[0] };
+	return { chapterId: "intro", subChapterId: "welcome" };
+}
+
+function getProgressIndex(chapterId: string, subChapterId?: string): number {
+	let idx = 0;
+	for (const ch of CHAPTERS) {
+		if (ch.id === chapterId) {
+			if (ch.subChapters && subChapterId) {
+				const subIdx = ch.subChapters.findIndex((s) => s.id === subChapterId);
+				return idx + (subIdx >= 0 ? subIdx + 1 : 1);
+			}
+			return idx + 1;
+		}
+		idx += ch.subChapters ? ch.subChapters.length : 1;
+	}
+	return idx;
+}
+
+function getTotalPages(): number {
+	return CHAPTERS.reduce((sum, ch) => sum + (ch.subChapters ? ch.subChapters.length : 1), 0);
+}
+
+const active = getActiveFromUrl(currentPath);
+const progress = getProgressIndex(active.chapterId, active.subChapterId);
+const total = getTotalPages();
+---
+
+<aside class="w-72 shrink-0 bg-paper border-r border-rule flex flex-col h-screen sticky top-0">
+  <!-- Masthead -->
+  <div class="px-6 pt-6 pb-4 shrink-0">
+    <div class="flex items-start justify-between">
+      <div>
+        <svg class="h-3 w-auto text-ink mb-3" viewBox="0 0 149 24" fill="currentColor" role="img" aria-label="Konrad">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0V6.32135L8.8371 15.1573L17.6769 23.9987H23.9987L11.9953 11.998L0 0Z"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M0 24H8.84161L4.42215 19.5778L0 15.1584V24Z"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M8.8407 0L15.4706 6.31544L22.1031 0H8.8407Z"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M40.8573 10.8278L46.442 4.42065H50.182L43.7535 11.4195L50.5254 19.5777H46.6257L41.198 12.7832L40.8573 13.1228V19.5777H37.8945V4.42065H40.8573V10.8278Z"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M54.3127 11.7176C54.3127 7.25605 57.9049 3.7889 62.5564 3.7889C67.1165 3.7889 70.7329 7.27721 70.7329 11.6938C70.7329 16.113 67.1165 19.5775 62.5107 19.5775C57.8834 19.5775 54.3127 16.158 54.3127 11.7176ZM57.3994 11.6726C57.3994 14.55 59.701 16.9064 62.5107 16.9064C65.3446 16.9064 67.6462 14.5712 67.6462 11.6726C67.6462 8.79524 65.3446 6.48645 62.5107 6.48645C59.701 6.48645 57.3994 8.81904 57.3994 11.6726Z"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M77.0477 19.2831V3.7889H79.1364L88.5554 14.3306V4.12844H91.5732V19.5775H89.4846L80.0628 9.03586V19.2831H77.0477Z"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M104.987 13.1917L109.889 19.5777H106.131L101.929 13.4889H101.556V19.5777H98.5208V4.42065H103.025C104.731 4.42065 106.107 4.808 106.995 5.51107C107.951 6.26189 108.534 7.5566 108.534 8.92028C108.534 10.4883 107.859 11.8281 106.714 12.555C106.153 12.8972 105.826 13.0326 104.987 13.1917ZM101.556 11.3983H102.42C104.357 11.3983 105.406 10.6023 105.406 9.10069C105.406 7.6017 104.404 6.82965 102.466 6.82965H101.556V11.3983Z"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M125.627 16.3077H119.455L118.073 19.5775H114.942L121.5 3.7889H123.723L130.099 19.5775H126.92L125.627 16.3077ZM124.719 13.8743L122.586 8.30921L120.388 13.8743H124.719Z"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M135.782 19.5777V4.42065H140.153C145.007 4.42065 148.413 7.53537 148.413 11.9872C148.413 14.2609 147.379 16.3967 145.63 17.8506C144.134 19.0551 142.476 19.5777 140.131 19.5777H135.782ZM138.772 17.0095H139.578C141.509 17.0095 142.753 16.6699 143.672 15.805C144.709 14.8738 145.332 13.465 145.332 11.9872C145.332 10.5334 144.709 9.12457 143.672 8.21456C142.638 7.33108 141.534 6.98883 139.578 6.98883H138.772V17.0095Z"></path>
+        </svg>
+        <a href="/intro/welcome" class="font-serif text-[17px] font-bold text-ink tracking-tight leading-snug">
+          AI Training Guide
+        </a>
+        <div class="mt-1 font-sans text-[10px] uppercase tracking-[0.14em] text-stone-500">
+          AI across the SDLC
+        </div>
+      </div>
+      <button
+        class="lg:hidden p-1 -mr-1 text-stone-400 hover:text-ink"
+        onclick="document.getElementById('sidebar-overlay')?.classList.add('hidden');document.getElementById('sidebar-panel')?.classList.add('-translate-x-full');"
+        aria-label="Close menu"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="double-rule mt-4"></div>
+  </div>
+
+  <!-- Search -->
+  <div class="px-4 pb-1 shrink-0 relative z-50" data-pagefind-ignore>
+    <div id="search" class="sidebar-search"></div>
+  </div>
+
+  <!-- Table of contents -->
+  <nav class="flex-1 pt-3 pb-4 overflow-y-auto">
+    <div class="px-6 pb-2 font-sans text-[10px] uppercase tracking-[0.16em] text-stone-400">
+      Contents
+    </div>
+    {CHAPTERS.map((chapter, chapterIdx) => {
+      const chMeta = TRACK_META[chapter.track]
+      const num = String(chapterIdx + 1).padStart(2, "0")
+      const isActiveChapter = chapter.id === active.chapterId
+      const hasSubs = chapter.subChapters && chapter.subChapters.length > 0
+      const chapterUrl = hasSubs
+        ? getUrlForNavItem({ chapterId: chapter.id, subChapterId: chapter.subChapters![0].id, label: '' })
+        : getUrlForNavItem({ chapterId: chapter.id, label: '' })
+
+      return (
+        <div>
+          {hasSubs ? (
+            <details open={isActiveChapter}>
+              <summary class="flex items-baseline gap-2.5 px-6 py-[7px] cursor-pointer list-none hover:bg-ink/[0.03]">
+                <span class={`w-5 shrink-0 font-sans text-[10px] tabular-nums ${chMeta.color}`}>{num}</span>
+                <a
+                  href={chapterUrl}
+                  onclick="event.stopPropagation()"
+                  class={`flex-1 font-serif text-[13.5px] leading-snug ${isActiveChapter ? "text-ink font-semibold" : "text-stone-500 hover:text-ink"}`}
+                >
+                  {chapter.label}
+                </a>
+                <span class="details-arrow font-sans text-[8px] text-stone-400 self-center">&#9654;</span>
+              </summary>
+              <div class="pb-1.5">
+                {chapter.subChapters!.map(sub => {
+                  const isActiveSub = isActiveChapter && active.subChapterId === sub.id
+                  const subUrl = getUrlForNavItem({ chapterId: chapter.id, subChapterId: sub.id, label: '' })
+                  return (
+                    <a
+                      href={subUrl}
+                      class={`relative block pl-[3.4rem] pr-6 py-[4px] font-serif text-[12.5px] leading-snug ${
+                        isActiveSub
+                          ? "text-ember font-medium"
+                          : "text-stone-500 hover:text-ink hover:bg-ink/[0.03]"
+                      }`}
+                    >
+                      {isActiveSub && <span class="absolute left-[2.55rem] top-1/2 -translate-y-1/2 w-1 h-1 bg-ember"></span>}
+                      {sub.label}
+                    </a>
+                  )
+                })}
+              </div>
+            </details>
+          ) : (
+            <a
+              href={chapterUrl}
+              class="relative flex items-baseline gap-2.5 px-6 py-[7px] hover:bg-ink/[0.03]"
+            >
+              <span class={`w-5 shrink-0 font-sans text-[10px] tabular-nums ${chMeta.color}`}>{num}</span>
+              <span class={`flex-1 font-serif text-[13.5px] leading-snug ${
+                isActiveChapter ? "text-ember font-semibold" : "text-stone-500 hover:text-ink"
+              }`}>
+                {chapter.label}
+              </span>
+              {isActiveChapter && <span class="absolute left-[1.05rem] top-1/2 -translate-y-1/2 w-1 h-1 bg-ember"></span>}
+            </a>
+          )}
+        </div>
+      )
+    })}
+  </nav>
+
+  <!-- Progress footer -->
+  <div class="px-6 py-4 border-t border-rule shrink-0">
+    <div class="flex items-baseline justify-between mb-2">
+      <span class="font-sans text-[10px] uppercase tracking-[0.14em] text-stone-500">Progress</span>
+      <span class="font-sans text-[11px] tabular-nums text-stone-500">{progress} / {total}</span>
+    </div>
+    <div class="h-[3px] bg-rule">
+      <div class="h-full bg-ember" style={`width: ${(progress / total) * 100}%`} />
+    </div>
+  </div>
+</aside>
+
+<style>
+  details[open] > summary .details-arrow {
+    transform: rotate(90deg);
+  }
+  .details-arrow {
+    transition: transform 0.15s ease;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>

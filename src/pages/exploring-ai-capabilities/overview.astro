@@ -1,0 +1,59 @@
+---
+import PageShell from "../../components/PageShell.astro";
+import { CHAPTERS } from "../../data/chapters";
+import MainLayout from "../../layouts/MainLayout.astro";
+
+const challenges = CHAPTERS.find((c) => c.id === "exploring-ai-capabilities")?.subChapters?.filter((s) => s.id !== "overview") ?? [];
+---
+
+<MainLayout title="Exploring AI Capabilities - AI Training Guide">
+	<PageShell chapterId="exploring-ai-capabilities" subChapterId="overview">
+		<div class="prose space-y-6">
+			<h3>What these challenges are for</h3>
+			<p>
+				These challenges are to help challenge your understanding of what is possible with AI agents today.
+			</p>
+			<p>
+				Each challenge is short and meant to give you a taste of what is possible with AI agents today, and how you can use them to help you in a project. 
+				Read through the AI output to see what tools it used, and how it accomplished its goal, trying to see how you could use these tools in your own projects.
+			</p>
+			<p>
+				For each of these challenges, you should be able to construct a prompt in under 100 words (most are less than 20).
+			</p>
+
+			<h3>The project</h3>
+			<p>
+				Kaiju Mutual insures policyholders against kaiju attacks. Its codebase has a public website, a consumer portal, an admin
+				portal, and an API that talks to outside vendors. Each challenge is a request from someone at the company, and you hand it
+				to your agent.
+			</p>
+
+			<p>
+				<a href="/downloads/kaiju-mutual.zip">Download the Kaiju Mutual project</a>
+			</p>
+
+			<h3>How each challenge works</h3>
+			<ol class="list-decimal pl-6 space-y-1">
+				<li>What the challenge shows about working with an agent.</li>
+				<li>The request, as you would receive it: an email, a ticket, a message.</li>
+				<li>Your task, which starts with "Write a prompt to…".</li>
+				<li>A checklist of what your agent should get done from a single prompt.</li>
+				<li>An example prompt that works.</li>
+			</ol>
+
+			<h3>Challenges</h3>
+		</div>
+
+		<ol class="mt-4 grid sm:grid-cols-2 gap-x-8 border-t border-rule">
+			{
+				challenges.map((c) => (
+					<li class="border-b border-rule py-2.5">
+						<a href={`/exploring-ai-capabilities/${c.id}`} class="font-serif text-[15px] text-ink hover:text-ember">
+							{c.label}
+						</a>
+					</li>
+				))
+			}
+		</ol>
+	</PageShell>
+</MainLayout>

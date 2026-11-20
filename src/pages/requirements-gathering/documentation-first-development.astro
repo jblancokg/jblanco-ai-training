@@ -1,0 +1,327 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Documentation-First Development - AI Training Guide">
+	<PageShell chapterId="requirements-gathering" subChapterId="documentation-first-development">
+		<div class="prose space-y-6">
+			<p>
+				Once your AI tool can see your files, the next question is what it should see. Documentation-first development answers that: you write the documentation before you write the code, and that documentation becomes the thing both people and AI build from.
+			</p>
+
+			<Callout variant="info" title="Where this sits at KG">
+				<p>
+					As of June 2026 this is our recommended default for new repositories. When you spin up a project, set up the docs structure below from day one. For older projects, we encourage backporting it as time permits, starting with an agents file and a{" "}
+					<code>docs/</code> folder, then filling in decisions and feature specs as you touch each area.
+				</p>
+			</Callout>
+
+			<h3>
+				The Philosophy: Documentation as the Source of Truth
+			</h3>
+
+			<p>
+				In most projects, the code is the only thing that is truly authoritative, and the "why" behind it lives in people's heads, scattered Slack threads, and stale wiki pages. Documentation-first flips that. The design docs, decision records, and feature specs are the source of truth for intent, and the code is the implementation of what those documents describe.
+			</p>
+
+			<p>
+				We think this is where the field is heading. Today the code is treated as the ultimate arbiter of what is true, and documentation is a nice-to-have that drifts out of date. We expect that to change. Documentation written and maintained this way will carry just as much weight as the code, and often it is the artifact you reason about first.
+			</p>
+
+			<p>
+				The practical rule is simple: for any non-trivial change, the document comes first. In practice the request itself is the go-ahead, so you write or update the relevant document as the first step, then implement it with AI assistance in the same change. You are not waiting on a separate sign-off before touching code. The document captures what you are building and why; the code captures how, and both land together.
+			</p>
+
+			<p>
+				This matters more with AI in the loop, not less. An AI assistant starts every task with no memory of your past decisions. If the reasoning behind your architecture lives only in the code, the AI has to reverse-engineer intent from implementation, and it will guess wrong. If that reasoning is written down, the AI reads it and works within your constraints instead of inventing its own.
+			</p>
+
+			<Callout variant="success" title="What you get">
+				<p>
+					Durable context that survives team changes, a written trail of why decisions were made, and an AI assistant that follows your intent because it can read it. The document you write to think through a problem is the same document the AI uses to implement it.
+				</p>
+			</Callout>
+
+			<h3>
+				Why It Makes PRs Easier
+			</h3>
+
+			<p>
+				Because the doc and the code land in the same PR, review becomes a comparison: does the implementation match what the doc describes? The reviewer reads the intent, then checks the code against it, instead of reconstructing the "why" from the diff. The harder question of whether it is even the right approach was handled while writing the doc, when changing direction cost a paragraph instead of a thousand lines of code.
+			</p>
+
+			<p>
+				On some projects a PO or PM reviews the change too, focusing only on the documentation portion. They confirm the intent is right; the engineers confirm the code matches it. Either way the decision record outlives the PR, so "why is it built this way" has a written answer six months later.
+			</p>
+
+			<h3>
+				This Is Not Spec-Driven Development
+			</h3>
+
+			<p>
+				Documentation-first is easy to confuse with spec-driven development (SDD), and the difference is worth being clear about. SDD, as implemented by tools like GitHub Spec Kit, AWS Kiro, and Tessl, treats a structured specification as a machine-consumed artifact that drives a defined pipeline: specify, clarify, plan, break into tasks, then generate code and tests from the spec. In its stricter forms the spec is the primary source and the code is disposable output regenerated from it.
+			</p>
+
+			<p>
+				Documentation-first is lighter and more human. The documents are prose written for people first (design notes, decision records, feature specs), and they happen to be excellent context for an AI. There is no required tool, no fixed lifecycle, and no code generator wired to the document. The doc is a durable record you maintain, not a compilation step.
+			</p>
+
+			<div class="overflow-x-auto my-8">
+				<table class="w-full text-sm border-collapse">
+					<thead>
+						<tr class="border-b border-stone-300">
+							<th class="text-left py-2 pr-4 font-semibold text-stone-800"></th>
+							<th class="text-left py-2 pr-4 font-semibold text-stone-800">Documentation-first</th>
+							<th class="text-left py-2 font-semibold text-stone-800">Spec-driven development</th>
+						</tr>
+					</thead>
+					<tbody class="text-stone-600">
+						<tr class="border-b border-stone-200">
+							<td class="py-2 pr-4 font-medium text-stone-700">Primary audience</td>
+							<td class="py-2 pr-4">People, with AI as a beneficiary</td>
+							<td class="py-2">The tool that generates code</td>
+						</tr>
+						<tr class="border-b border-stone-200">
+							<td class="py-2 pr-4 font-medium text-stone-700">The document is</td>
+							<td class="py-2 pr-4">A durable, maintained source of truth</td>
+							<td class="py-2">A machine input, often ephemeral or a log</td>
+						</tr>
+						<tr class="border-b border-stone-200">
+							<td class="py-2 pr-4 font-medium text-stone-700">Tooling</td>
+							<td class="py-2 pr-4">Any AI tool, plain markdown</td>
+							<td class="py-2">A specific SDD toolkit and lifecycle</td>
+						</tr>
+						<tr class="border-b border-stone-200">
+							<td class="py-2 pr-4 font-medium text-stone-700">Relationship to code</td>
+							<td class="py-2 pr-4">Code implements the doc; both are kept</td>
+							<td class="py-2">Code is often derived output of the spec</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<p>
+				We are not recommending SDD at KG right now. The distinction that matters most is durability. In spec-driven development the spec often ends up ephemeral, a scratch input or a log of what was generated, while the code drifts back into being the real source of truth. Documentation-first makes the opposite bet: the document is the artifact you keep and maintain, and it stays authoritative long after the code that first implemented it has changed.
+			</p>
+
+			<h3>
+				The Agents File
+			</h3>
+
+			<p>
+				The agents file is the top-level instructions for how to work in your repository. It is the first thing an AI assistant reads, and it should read like an onboarding doc for a new team member: how the project is laid out, the conventions you follow, and the things AI tools tend to get wrong here.
+			</p>
+
+			<p>
+				Two filenames matter.{" "}
+				<a href="https://agents.md" target="_blank" rel="noopener noreferrer" class="text-teal-600 hover:text-teal-800"><code>AGENTS.md</code></a>{" "}
+				is the open, tool-agnostic standard, now stewarded under the Linux Foundation and read natively by 28+ tools including Cursor, Copilot, Codex, Gemini CLI, and Zed.{" "}
+				<code>CLAUDE.md</code> is Claude Code's richer native format. Claude Code reads both, so a common pattern is a single agents file with the other as a short pointer to it.
+			</p>
+
+			<p>
+				The key move for documentation-first is that the agents file names the workflow. It tells the AI, in writing, that non-trivial changes start with a doc and to pause for you to approve that doc before it writes code. That approval is you, the operator, signing off on the AI's plan in the moment. It is a different thing from the team-level process above, where the ticket is the go-ahead and there is no separate gate. Here is the shape of that instruction from a KG project:
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8 font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`## Development flow: documentation-first
+
+All documentation lives in docs/. This project uses a
+documentation-first approach. The default flow for any
+non-trivial change is:
+
+1. Documentation - write or update the relevant docs first.
+2. User approval - wait for explicit approval of the docs
+   before writing code. Do not skip this.
+3. Implementation - build the change.
+4. Tests - all tests must pass before declaring done.
+
+Skip steps only when they genuinely don't apply. If a task
+starts ambiguous, default to step 1 first and ask for
+approval before going further.`}</div>
+
+			<Callout variant="tip" title="Practical tip">
+				<p>
+					Keep the agents file about how to work, not what the project is. Architecture and tech-stack detail belong in their own docs that the agents file links to. In monorepos, place an agents file in each package. Most tools read the nearest one to the file being edited, so subprojects can carry tailored instructions.
+				</p>
+			</Callout>
+
+			<h3>
+				The docs Folder and Its Index
+			</h3>
+
+			<p>
+				If the agents file is how to work, the{" "}
+				<code>docs/</code> folder is where the thinking lives. A good structure sorts documents by what they are the source of truth for, so both people and AI know where to look and where to add. A README or index at the root ties it together and points into each area.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8 font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`docs/
+  index.md          entry point: links into each folder below
+  decisions/        ADRs - why we decided things (historical log)
+  features/         feature specs - what we build
+  tech/             living tech-choice reasoning
+  guides/           how-tos and runbooks
+  external/         specs from vendors and other teams we consume
+  workflows/        domain workflows: states and transitions`}</div>
+
+			<p>
+				The{" "}
+				<code>decisions/</code> folder deserves special mention. These are Architecture Decision Records:{" "}
+				<a href="https://adr.github.io" target="_blank" rel="noopener noreferrer" class="text-teal-600 hover:text-teal-800">short, immutable notes</a>{" "}
+				that each capture one decision, its context, and its consequences. They are the written answer to "why is it built this way," and they are some of the highest-value context you can give an AI assistant because they encode the constraints it must not violate.
+			</p>
+
+			<p>
+				The README at the repo root should get a new person, or a fresh AI session, oriented in under a minute: what the project is, where to read about the architecture, where the conventions live, and how to get running. A "start here" table that maps a goal to a file works well:
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8 font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`## Start here
+
+| If you want to...                     | Read              |
+|---------------------------------------|-------------------|
+| Understand the architecture           | TECHSTACK.md      |
+| Know how we work here (the rules)     | CLAUDE.md         |
+| Find or write documentation           | docs/index.md     |
+| Get running locally                   | docs/guides/...   |`}</div>
+
+			<h3>
+				OKF: A Standard Shape for Your Docs
+			</h3>
+
+			<p>
+				A folder of markdown is a good start, but once an AI (or a search tool, or an indexer) has to walk your docs, a consistent shape helps. The{" "}
+				<a href="https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md" target="_blank" rel="noopener noreferrer" class="text-teal-600 hover:text-teal-800">Open Knowledge Format (OKF)</a>{" "}
+				is a minimal, open convention from Google for exactly this: a human- and agent-friendly way to structure a directory of knowledge documents. It is still early (v0.1, draft), but it is a sensible default and it is tool-agnostic.
+			</p>
+
+			<p>
+				OKF is deliberately small. A few ideas cover most of it:
+			</p>
+
+			<ul class="space-y-3 my-4">
+				<li>
+					<span class="font-semibold">Bundle.</span> A directory of markdown documents is a "bundle." Your{" "}
+					<code>docs/</code> folder is one.
+				</li>
+				<li>
+					<span class="font-semibold">Concept documents.</span> Each markdown file describes one thing, and its ID is just its path with{" "}
+					<code>.md</code> dropped (so{" "}
+					<code>decisions/0001-stateless-sessions.md</code> is the concept{" "}
+					<code>decisions/0001-stateless-sessions</code>).
+				</li>
+				<li>
+					<span class="font-semibold">Frontmatter.</span> Each doc opens with a small YAML block. The only required field is{" "}
+					<code>type</code>. Recommended fields like{" "}
+					<code>title</code>,{" "}
+					<code>description</code>,{" "}
+					<code>tags</code>, and{" "}
+					<code>timestamp</code> are added where they apply, and anything else you need is allowed as an extension.
+				</li>
+				<li>
+					<span class="font-semibold">Reserved filenames.</span>{" "}
+					<code>index.md</code> is a frontmatter-free directory listing (one per folder), and{" "}
+					<code>log.md</code> is an optional changelog. Everything else is a concept doc.
+				</li>
+			</ul>
+
+			<p>
+				A doc's frontmatter ends up looking like this. Everything past{" "}
+				<code>type</code> is optional, and fields your project needs but OKF does not define (here{" "}
+				<code>status</code> and{" "}
+				<code>owner</code>) are allowed as extensions:
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8 font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`---
+type: decision              # required - the only field OKF mandates
+title: Stateless BFF sessions
+description: Sessions are stateless, signed cookies, no server store.
+tags: [auth, bff, sessions]
+timestamp: 2026-05-28       # ISO 8601 date of last meaningful change
+status: accepted            # extension field (project-specific)
+owner: mvalstar             # extension field (project-specific)
+---`}</div>
+
+			<p>
+				The payoff is interoperability. Because the shape is standard, any OKF-aware tool (an indexer, a search layer, a future AI agent) knows how to read your docs without repo-specific knowledge, and you keep the project-specific fields you actually rely on. If you adopt it, record that decision in an ADR so the next person, and the next AI session, knows the docs follow OKF and why.
+			</p>
+
+			<Callout variant="tip" title="Practical tip">
+				<p>
+					Give each folder a{" "}
+					<code>_template.md</code> with the frontmatter already filled in. When you or the AI add a doc, copy the template instead of guessing the shape. This is the single cheapest way to keep a docs bundle consistent over time.
+				</p>
+			</Callout>
+
+			<h3>
+				Putting It Together
+			</h3>
+
+			<p>
+				The three pieces reinforce each other. The agents file tells the AI to work documentation-first and points at the docs. The{" "}
+				<code>docs/</code> folder holds the intent, sorted by what each document is the source of truth for. OKF gives those documents a consistent, portable shape. The result is that starting a task looks like writing the doc, then letting the AI implement against a spec it can actually read, which is exactly the groundwork the previous section pointed at.
+			</p>
+
+			<h3>
+				Backporting to Existing Projects
+			</h3>
+
+			<p>
+				Older repos won't have any of this, and you do not need to stop and document the whole system before you get the benefit. Backport it incrementally. Add the scaffolding once (an agents file and an empty{" "}
+				<code>docs/</code> folder), then let documentation accrue as you touch each area. The rule of thumb: whenever you work on a slice of the system that has no doc yet, write the doc for that slice first, then make your change.
+			</p>
+
+			<p>
+				The AI can do most of this work for you if you tell it to. Add a short backfill instruction to your agents file so that every session contributes to the docs instead of leaving them behind:
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8 font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`## Backfilling docs (existing code)
+
+This repo is adopting documentation-first incrementally. When
+you work on an area that has no doc yet:
+
+1. Before changing it, write a short doc in docs/ capturing how
+   the area works today and why (a feature spec, or a decision
+   record if you find an undocumented choice worth recording).
+2. Get my sign-off on that doc, then make the change and update
+   the doc to match.
+3. Don't document the whole system at once. Document the slice
+   you touch, and leave a TODO where you had to guess.`}</div>
+
+			<p>
+				With that in place, the work drags the docs into existence. Asked to fix a bug in the billing retry logic, the AI first writes{" "}
+				<code>docs/features/0007-billing-retries.md</code> describing the current behavior, flags that the retry cap was never recorded as a decision, waits for you to confirm, then fixes the bug and updates the doc. A month of ordinary tickets later, the parts of the system you actually work on are the parts that are documented, which is the right order to do it in.
+			</p>
+
+			<Callout variant="tip" title="Practical tip">
+				<p>
+					Point the AI at a well-documented repo (like the one this section draws from) as a reference for the shape you want, then have it mirror that structure in the project you are backporting. Copying an existing{" "}
+					<code>docs/</code> layout and a couple of{" "}
+					<code>_template.md</code> files is faster than describing the convention from scratch.
+				</p>
+			</Callout>
+
+			<h3>Further Reading</h3>
+			<ul class="text-sm space-y-2 my-4">
+				<li>
+					<a href="https://agents.md" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">AGENTS.md</a> — the open standard for agent instruction files, stewarded under the Linux Foundation
+				</li>
+				<li>
+					<a href="https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">Open Knowledge Format (OKF) v0.1 Spec</a> — Google's minimal convention for agent-friendly documentation bundles
+				</li>
+				<li>
+					<a href="https://adr.github.io" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">Architecture Decision Records</a> — what an ADR is and how to keep a decision log
+				</li>
+				<li>
+					<a href="https://developer.microsoft.com/blog/spec-driven-development-ai-native-engineering" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">Spec-Driven Development: A Spec-First Approach to AI-Native Engineering</a> — Microsoft, June 2026 (the heavier, tool-driven cousin)
+				</li>
+				<li>
+					<a href="https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">Understanding Spec-Driven Development: Kiro, spec-kit, and Tessl</a> — martinfowler.com, on how SDD tools differ
+				</li>
+				<li>
+					<a href="https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">Spec-Driven Development with AI: GitHub Spec Kit</a> — GitHub, on the SDD lifecycle
+				</li>
+			</ul>
+		</div>
+	</PageShell>
+</MainLayout>

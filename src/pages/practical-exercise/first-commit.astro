@@ -1,0 +1,155 @@
+---
+import { AnnotatedCodeTour } from "../../components/AnnotatedCodeTour";
+import Callout from "../../components/Callout.astro";
+import InlineCommand from "../../components/InlineCommand";
+import PageShell from "../../components/PageShell.astro";
+import TerminalBlock from "../../components/TerminalBlock";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Your First Commit - AI Training Guide">
+  <PageShell chapterId="practical-exercise" subChapterId="first-commit">
+    <div class="prose space-y-6">
+      <p>
+        With your requirements written and your tasks broken down, you are ready to begin implementation. In this exercise, you will implement your first feature task using the breakdown you created in the previous step.
+      </p>
+
+      <section>
+        <h3 class="text-xl font-bold text-stone-800 mt-8 mb-4">(Optional) Step 1: Install Conventional Commits Skill</h3>
+        <p>
+          Before we start coding, we recommend that you install one more skill. The <strong>Conventional Commits</strong> skill helps the AI write structured, meaningful commit messages. This makes your Git history more readable for both humans and future AI sessions and will be useful to you beyond this sample project.
+        </p>
+
+        <div class="flex flex-wrap gap-3 my-6">
+          <a
+            href="/downloads/conventional-commits-skill.zip"
+            download
+            class="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-md hover:bg-violet-700 transition-colors no-underline"
+          >
+            <span>&#8595;</span> Download Conventional Commits Skill
+          </a>
+        </div>
+
+        <div class="bg-stone-50 border border-stone-200 rounded-lg p-5">
+          <h4 class="font-bold text-stone-800 mt-0 mb-3 text-sm italic">Installation:</h4>
+          <ol class="list-decimal pl-5 space-y-2 text-sm text-stone-700">
+            <li>Download and unzip the file.</li>
+            <li>Place the <code>conventional-commits</code> folder into your project's <code class=".agents/skills/">.agents/skills/</code> directory.</li>
+            <li>Verify it's recognized by running <InlineCommand command="/skills" client:visible /> in your Gemini CLI.</li>
+          </ol>
+        </div>
+
+        <Callout variant="info" title="Why use this?">
+          <p>
+            Structured commits provide better context when the AI reads your Git log in future sessions. It helps the AI understand <em>why</em> a change was made, not just <em>what</em> was changed.
+          </p>
+        </Callout>
+      </section>
+
+      <section>
+        <h3 class="text-xl font-bold text-stone-800 mt-8 mb-4">Step 2: Choose Your First Task</h3>
+        <p>
+          We'll start with the <strong>habit tracker</strong>. Open the habit tracker task breakdown you generated in the previous exercise (found in <code>@docs/tasks/habit-tracker.md</code>).
+        </p>
+        <p>
+          Choose the first task from your breakdown. It's usually best to start with the foundational items (like defining types or setting up a basic hook) before moving to UI components.
+        </p>
+
+        <Callout variant="tip" title="Note on Task Scopes">
+          <p>
+            If your task breakdown was successful, your first task should be sized for roughly 1-2 hours of effort. Keeping tasks small ensures the AI stays focused and reduces the chance of errors.
+          </p>
+        </Callout>
+      </section>
+
+      <section>
+        <h3 class="text-xl font-bold text-stone-800 mt-8 mb-4">Step 3: Prompting for Implementation</h3>
+        <p>
+          When you are ready to implement, you don't need to write a long, complex prompt. Your task breakdown <strong>is</strong> the prompt.
+        </p>
+        <p class="mb-4">
+          Simply reference the task file and specify which task you want the AI to execute. The AI will read the description, acceptance criteria, and technical constraints directly from your document.
+        </p>
+
+        <TerminalBlock
+          title="Example Prompt"
+          lines={[
+            { type: "command", command: "Implement Task 1 from @docs/tasks/habit-tracker.md." },
+          ]}
+          client:visible
+        />
+
+        <p class="mt-4">
+          A well-structured task should produce working code within <strong>one or two prompt cycles</strong> with minimal additional direction.
+        </p>
+      </section>
+
+      <section>
+        <h3 class="text-xl font-bold text-stone-800 mt-8 mb-4">Step 4: Review the AI-generated changes</h3>
+        <p>
+          Throughout each task and feature, you should be actively <strong>reviewing AI diffs</strong> and asking questions as you go. Never treat the AI's output as <i>done</i> without understanding what was changed. 
+        </p>
+        
+        <p>
+          Ultimately, you own the code regardless of who (or what) wrote it. Before pushing any changes, have the AI create a <strong>manual testing plan</strong> for the new feature and personally verify that these steps pass. You can use the acceptance criteria generated in the task breakdowns as a guideline.
+        </p>
+
+        <div class="bg-stone-50 border border-stone-200 rounded-lg px-6 py-1 my-8">
+          <h4 class="text-sm font-bold text-stone-500 uppercase tracking-wider mt-4">Interactive Review</h4>
+          <p class="text-sm text-stone-700 leading-relaxed">
+            Examine the code below: this is a snippet of AI-generated code for the Habit Tracker streak recalculation logic. Use the tour to see common areas where a human reviewer could intervene or clarify intent.
+          </p>
+          <AnnotatedCodeTour client:visible />
+        </div>
+      </section>
+
+      <section>
+        <h3 class="text-xl font-bold text-stone-800 mt-8 mb-4">Step 5: The Implementation Workflow</h3>
+        <p>
+          Throughout this workflow, ensure you adhere to these two core habits to maintain a clean workspace:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+          <div class="bg-teal-50 border border-teal-200 rounded-lg p-5">
+            <h4 class="text-teal-800 font-bold mt-0 mb-3 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+              Start Fresh
+            </h4>
+            <p class="text-sm text-teal-900 leading-relaxed">
+              Start a <strong>fresh chat session</strong> for each distinct task. This prevents context from bleeding between tasks and ensures the AI isn't distracted by previous discussions.
+            </p>
+          </div>
+
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-5">
+            <h4 class="text-amber-800 font-bold mt-0 mb-3 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              Commit Often
+            </h4>
+            <p class="text-sm text-amber-900 leading-relaxed">
+              <strong>Commit after every successful prompt cycle.</strong> Once the AI completes a task and you've verified it works, use the <code>conventional-commits</code> skill to commit the change.
+            </p>
+          </div>
+        </div>
+
+        <TerminalBlock
+          title="Commit with Skill"
+          lines={[
+            { type: "comment", text: "# Once verified, ask the AI to commit" },
+            { type: "command", command: "/commit" },
+          ]}
+          client:visible
+        />
+
+        <p class="mt-4">
+          <i>Note:</i> The AI may ask you to confirm before making the commit, so double-check that the commit was actually completed.
+        </p>
+      </section>
+
+      <section class="border-t border-stone-200 pt-8 mt-8">
+        <p class="text-stone-800 font-medium">
+          Choose your first task, open a fresh chat, and let the AI build the first part of your feature. Feel free to implement the rest of the tasks for the tracker widget. Before continuing with the rest of the features, however, in the next lesson we will learn how to use AI to create a PR using the GitHub CLI.
+        </p>
+      </section>
+    </div>
+  </PageShell>
+</MainLayout>

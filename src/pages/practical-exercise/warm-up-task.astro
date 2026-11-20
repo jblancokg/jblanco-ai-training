@@ -1,0 +1,274 @@
+---
+import InlineCommand from "../../components/InlineCommand.tsx";
+import PageShell from "../../components/PageShell.astro";
+import PromptComparison from "../../components/PromptComparison.tsx";
+import TerminalBlock from "../../components/TerminalBlock.tsx";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Warm-up Task - AI Training Guide">
+  <PageShell chapterId="practical-exercise" subChapterId="warm-up-task">
+    <div class="prose space-y-6">
+      <section>
+        <h2 class="text-2xl font-bold text-stone-800 mb-4">App Overview: The Dashboard</h2>
+        <p>
+          For these exercises, you'll be working on a <strong>Productivity Dashboard</strong>.
+        </p>
+        <p>
+          The dashboard is built using <strong>React</strong>, <strong>TypeScript</strong>, and <strong>Tailwind CSS</strong>, with <strong
+            >TanStack Router</strong
+          > handling navigation.
+        </p>
+      </section>
+
+      <section>
+        <h3>Current Feature Status</h3>
+        <p>
+          The application is currently in a partially built state. Some core infrastructure is in place, while several key features are waiting for your
+          implementation.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+          <div class="bg-teal-50 border border-teal-200 rounded-lg p-5">
+            <h4 class="text-teal-800 font-bold mt-0 mb-3 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+              Implemented
+            </h4>
+            <ul class="space-y-2 mb-0 list-none pl-0">
+              <li class="text-sm text-teal-900"><strong>Dashboard Shell:</strong> The main layout, navigation, and theme toggling.</li>
+              <li class="text-sm text-teal-900"><strong>Important Dates:</strong> A simple list for tracking upcoming deadlines.</li>
+              <li class="text-sm text-teal-900"><strong>Todo List:</strong> Basic CRUD functionality for daily tasks.</li>
+              <li class="text-sm text-teal-900"><strong>World Clock:</strong> Displays current time across multiple time zones.</li>
+            </ul>
+          </div>
+
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-5">
+            <h4 class="text-amber-800 font-bold mt-0 mb-3 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              Pending (Your Tasks)
+            </h4>
+            <ul class="space-y-2 mb-0 list-none pl-0">
+              <li class="text-sm text-amber-900"><strong>Notepad:</strong> A dashboard widget for quick scratchpad notes.</li>
+              <li class="text-sm text-amber-900"><strong>Pomodoro Timer:</strong> A focus timer tool with preset intervals.</li>
+              <li class="text-sm text-amber-900"><strong>Habit Tracker:</strong> A visual grid for tracking weekly streaks.</li>
+              <li class="text-sm text-amber-900">And finally, a feature of your choice.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="bg-sky-50 border border-sky-200 rounded-lg px-6 py-5 my-8">
+        <h4 class="font-bold mt-0 mb-2 text-sky-600">Remember the Basics</h4>
+        <p class="text-sm text-sky-800 leading-relaxed mb-4">
+          As you move into these tasks, keep the <a href="/fundamentals/prompt-engineering">Prompt Engineering Basics</a> in mind. These will save you from endless
+          back-and-forth debugging:
+        </p>
+        <ul class="space-y-2 mb-0">
+          <li class="text-sky-900 text-sm">
+            <strong>Explain the 'Why':</strong> Don't just ask for a feature; explain what user problem it solves. Context prevents hallucinations.
+          </li>
+          <li class="text-sky-900 text-sm">
+            <strong>Bite-Sized Tasks:</strong> AI performs best on scoped, specific requests. Don't build the whole "Notepad" in one prompt; move task by task.
+          </li>
+          <li class="text-sky-900 text-sm">
+            <strong>Use Golden Masters:</strong> When asking the AI to write a new component, reference an existing component or feature as a stylistic example.
+          </li>
+          <li class="text-sky-900 text-sm">
+            <strong>Reference Your Code:</strong> Explicitly mention filenames like <code>@src/lib/storage.ts</code> so the AI knows which existing utilities to reuse.
+          </li>
+        </ul>
+      </div>
+
+      <section>
+        <h3>Workflow & CLI Commands</h3>
+        <p>
+          Note that throughout these tasks, you'll need to master going back and forth between prompting your AI assistant and <a
+            href="/development/utilizing-git">Utilizing Git</a
+          > to keep track of changes and revert where necessary.
+        </p>
+
+        <div class="space-y-4">
+          <div class="bg-stone-50 border border-stone-200 rounded-lg p-5">
+            <h4 class="font-bold text-stone-800 mt-0 mb-2 text-sm">1. Execution</h4>
+            <p class="text-sm text-stone-600 mb-3">
+              Once you have run <InlineCommand command="gemini" client:visible /> and authenticated with your Google account, you may initiate prompts in your terminal.{" "}
+              <strong>Remember:</strong> Anytime you believe your context has been compressed, or gemini is hanging, commit what you have and start a new conversation.
+            </p>
+            <TerminalBlock
+              title="terminal"
+              lines={[
+                { type: "comment", text: "# Kill the current process with Ctrl + C" },
+                { type: "command", command: "^C" },
+                { type: "comment", text: "# Relaunch" },
+                { type: "command", command: "gemini" },
+              ]}
+              client:visible
+            />
+          </div>
+
+          <div class="bg-stone-50 border border-stone-200 rounded-lg p-5">
+            <h4 class="font-bold text-stone-800 mt-0 mb-2 text-sm">2. Git Workflow (via git & gh)</h4>
+            <p class="text-sm text-stone-600 mb-3">
+              Use standard Git commands to manage the AI's changes. The goal is to commit after <strong>every successful prompt cycle</strong>. We use <InlineCommand
+                command="gh"
+                client:visible
+              /> for repository and PR management.
+            </p>
+            <div class="space-y-3">
+              <TerminalBlock
+                title="commit changes"
+                lines={[
+                  { type: "comment", text: "# Commit after a successful prompt" },
+                  { type: "command", command: 'git add . && git commit -m "fix: resolve world clock bug"' },
+                ]}
+                client:visible
+              />
+              <TerminalBlock
+                title="revert changes"
+                lines={[
+                  { type: "comment", text: "# Revert to your last good state" },
+                  { type: "command", command: "git reset --hard HEAD" },
+                  { type: "comment", text: "# OR" },
+                  { type: "command", command: "git checkout ." },
+                ]}
+                client:visible
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-stone-100 border border-stone-200 rounded-lg px-5 py-4 my-6">
+          <div class="text-xs font-bold text-stone-600 uppercase tracking-wider mb-1">A Note on Other Tools</div>
+          <p class="text-sm text-stone-800 leading-relaxed mb-0">
+            While these exercises use Gemini CLI, the principles remain identical in <strong>Claude Code</strong>, <strong>Cursor</strong>, or <strong
+              >GitHub Copilot</strong
+            >.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h3>Task: UI Bug Audit</h3>
+        <p>
+          Before building new features, we need to address some bugs in the existing UI. Navigate through the dashboard and identify three specific UI bugs that
+          have been intentionally left in the codebase.
+        </p>
+
+        <details class="group bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-6">
+          <summary class="list-none cursor-pointer flex items-center justify-between font-bold text-stone-700">
+            <span>Need a hint?</span>
+            <span class="transition-transform group-open:rotate-180">▼</span>
+          </summary>
+          <div class="mt-4 space-y-3 text-stone-600 border-t border-stone-200 pt-4">
+            <p class="text-sm"><strong>Hint 1:</strong> Try adding a new important date. Look at the "Category" dropdown's icon spacing.</p>
+            <p class="text-sm">
+              <strong>Hint 2:</strong> Check the "World Clock" widget on the dashboard. Are the clock numbers fitting properly in the cards?
+            </p>
+            <p class="text-sm"><strong>Hint 3:</strong> Navigate to any page and look at the bottom of the page title. Does the title baseline look correct?</p>
+          </div>
+        </details>
+      </section>
+
+      <section>
+        <h3>Exercise: The Prompt Comparison Test</h3>
+        <p>
+          Now that we know what's broken, the goal is to craft a prompt that works. How you structure your request directly determines how long you will spend
+          fixing this bug.
+        </p>
+        <p>
+          To better understand this, execute the following two prompts against the <strong>World Clock</strong> overflow bug. Between each prompt revert
+          your codebase to its original state so you can compare them.
+        </p>
+
+        <PromptComparison client:visible />
+
+        <div class="space-y-4 mb-8 mt-4">
+          <h4 class="font-bold text-stone-800 text-md italic">Execution Steps:</h4>
+          <ol class="text-sm text-stone-700 space-y-3">
+            <li><strong>Step 1:</strong> Run <strong>Prompt #1</strong> in the Gemini CLI. Observe how the AI responds and what changes it makes as well as how long it takes.</li>
+            <li>
+              <strong>Step 2:</strong> Revert the changes using <InlineCommand command="git reset --hard HEAD" client:visible /> (or <InlineCommand
+                command="git checkout ."
+                client:visible
+              />) to return to a clean state.
+            </li>
+            <li>
+              <strong>Step 3:</strong> Run <strong>Prompt #2</strong>. Observe the difference in response quality, accuracy, and how much guessing the AI does.
+            </li>
+          </ol>
+
+          <div class="bg-stone-100 border border-stone-200 rounded-lg px-5 py-4 my-6">
+            <h5 class="text-xs font-bold text-stone-600 uppercase tracking-wider mt-0 mb-2">Referencing Files in Other Tools</h5>
+            <p class="text-sm text-stone-800 leading-relaxed mb-0">
+              If you're using most tools, you can "attach" files to your prompt by typing <code>@</code> followed by the filename (e.g., <code
+                >@WorldClockCard.tsx</code
+              >).
+            </p>
+          </div>
+        </div>
+
+        <p>
+          Notice the vast difference in output quality between the two prompts, both in interaction with you, the decision maker, as well as in the actual
+          result.
+        </p>
+        <p>
+          <strong>Prompt #1</strong> is a <i>passive</i> prompt. By providing no context and no direction, you force the AI to guess. It will likely spend several
+          turns trying to find the file, misinterpreting "fitting" as a logic error rather than a CSS overflow, and producing a generic "fix" that might break other
+          components. On edit, it does not ask you any clarifying questions before proceeding with making changes that will likely ultimately fail to fix the bug.
+        </p>
+        <p>
+          <strong>Prompt #2</strong> is <i>assertive and diagnostic</i>. You identified the root cause, pointed to the exact files, and set clear constraints.
+          By providing the file path you're restricting the AI's search space, which significantly reduces the risk of it hallucinating a fix in an unrelated
+          CSS file. By asking for options instead of a blind fix, and by forcing the AI to ask clarifying questions before proceeding with edits, you maintained
+          strong ownership of the code and ultimately had better understanding and control over the output. The result is almost always a higher-quality fix on
+          the first try.
+        </p>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-lg px-5 py-4 my-6">
+          <div class="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Tip: Built-in Undo</div>
+          <p class="text-sm text-amber-800 leading-relaxed mb-0">
+            While <InlineCommand command="git reset" client:visible /> is the safest way to revert your entire workspace, you can also use the <InlineCommand
+              command="/rewind"
+              client:visible
+            /> command directly in the Gemini CLI. This will step backward through your conversation history and automatically undo any file edits made by the AI
+            in those turns. You can also type <InlineCommand command="/" client:visible /> in the CLI terminal at any time to see a full list of slash commands and
+            customization options.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h3>Discovery & Documentation</h3>
+        <p>Before you continue to fix the rest of the bugs, feel free to use the AI to help you understand the rest of the codebase.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+          <div class="border border-stone-200 rounded-lg p-5">
+            <h4 class="font-bold text-stone-700 mt-0 mb-2 text-sm italic">"Ask" Mode</h4>
+            <p class="text-sm text-stone-600 mb-0 leading-relaxed">
+              Don't jump straight to edits. Use the AI to ask architectural questions: <em>"How does the useStorage hook work?"</em> or <em
+                >"What is the layout pattern for existing cards?"</em
+              >
+            </p>
+          </div>
+          <div class="border border-stone-200 rounded-lg p-5">
+            <h4 class="font-bold text-stone-700 mt-0 mb-2 text-sm italic">Review AGENTS.md</h4>
+            <p class="text-sm text-stone-600 mb-0 leading-relaxed">
+              Refer back to <a href="/task-breakdowns/agents-md">this lesson</a> and review <code>AGENTS.md</code> in the project root. It provides the AI with its
+              primary context. Update it with any new technical details you discover during your debugging sessions.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-t border-stone-200 pt-8">
+        <p class="text-stone-800 font-medium">
+          Now that you've set up your environment and experimented with prompts, take some time to fix the remaining UI bugs. Experiment with prompts: use
+          markdown in prompts, provide bulleted instructions, have it ask you questions, have it provide options, etc. to determine what works best for you.
+        </p>
+        <p class="text-stone-800 font-medium">
+          Once you've committed those fixes, you're ready to move on to the next lesson where we'll start building features from scratch.
+        </p>
+      </section>
+    </div>
+  </PageShell>
+</MainLayout>

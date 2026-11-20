@@ -1,0 +1,104 @@
+---
+import Callout from "../components/Callout.astro";
+import PageShell from "../components/PageShell.astro";
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Final Thoughts - AI Training Guide">
+	<PageShell chapterId="final-thoughts">
+		<div class="prose space-y-6">
+			<p>
+				If there is one theme running through this entire training, it is this:{" "}
+				<strong class="text-stone-800">AI is most useful when you treat it as leverage, not magic.</strong>{" "}
+				It can help you think faster, write faster, research faster, and explore more options.
+				But it does not remove the need for judgment. In most cases, it makes judgment more important.
+			</p>
+
+			<p>
+				The people who get the most value from these tools are usually not the people with the
+				most elaborate setup. They are the people who give clear context, break work into
+				reasonable chunks, review output carefully, and keep improving their workflow over time.
+			</p>
+
+			<Callout variant="tip" title="Start simpler than you think">
+				<p>
+					Do not try to adopt every skill, MCP server, agent mode, and workflow pattern at once.
+					Start with one or two high-value use cases, get reliable results, then layer on more.
+					Complexity in your AI setup creates its own failure modes.
+				</p>
+			</Callout>
+
+			<h3>The Work Is Still Yours</h3>
+
+			<p>
+				This training covered requirements, research, task breakdowns, development,
+				documentation, and testing. Across all of those areas, the pattern is the same:
+				the AI can accelerate the first draft, but the human still owns the direction,
+				the review, and the final decision.
+			</p>
+
+			<p>
+				That is why so much of effective AI usage looks a lot like good senior-level work.
+				You write clearer briefs. You provide better context. You verify facts. You review
+				output more rigorously. You document decisions so the next session starts from a
+				better place. The leverage comes from doing those things well, not from avoiding them.
+			</p>
+
+			<h3>Prompt Like You Are Delegating</h3>
+
+			<p>
+				A vague prompt often produces fast, convincing, low-value output. A detailed prompt
+				is closer to writing requirements for a teammate: what the goal is, why it matters,
+				what constraints exist, what files or documents matter, and what good looks like.
+			</p>
+
+			<p>
+				This is especially important because the AI is stateless. It does not carry forward
+				yesterday's corrections, your team's unwritten rules, or the background sitting in
+				your head. Every strong result starts with good context.
+			</p>
+
+			<Callout variant="example" title="The practical mental model">
+				<p>
+					Treat the AI like a capable but inexperienced teammate who joins for one task,
+					works very quickly, and leaves with no memory when the session ends.
+				</p>
+			</Callout>
+
+			<h3>Review More, Not Less</h3>
+
+			<p>
+				AI changes where the time goes. You usually spend less time producing a first draft
+				and more time reviewing, testing, and refining. That is not overhead. That is the job.
+			</p>
+
+			<p>
+				The output may look polished even when it is wrong. Confidence and correctness are still
+				separate things. So whether the AI is writing requirements, summarizing research,
+				generating tests, or changing code, the standard stays the same: verify what matters,
+				challenge assumptions, and only ship what you understand.
+			</p>
+
+			<h3>Build a Workflow That Fits You</h3>
+
+			<p>
+				You do not need a perfect system on day one. What you need is a repeatable workflow that
+				makes your actual work better. Try a few patterns from this training. Keep the ones that
+				save time without lowering quality. Drop or modify the ones that don't work for you.
+			</p>
+
+			<p>
+				The goal is not to become someone who uses AI for everything. The goal is to become
+				someone who knows when AI helps, when it hurts, and how to guide it productively.
+			</p>
+
+			<Callout variant="tip" title="Take this into the practical">
+				<p>
+					Start with a small task. Give the AI strong context. Keep the scope tight. Review
+					the output like it came from a junior teammate. Then adjust your workflow based on
+					what actually happened, not on the marketing around the tools.
+				</p>
+			</Callout>
+		</div>
+	</PageShell>
+</MainLayout>

@@ -1,0 +1,44 @@
+---
+interface Props {
+	/** A prompt that completes the challenge in one go */
+	prompt: string;
+}
+
+const { prompt } = Astro.props;
+---
+
+<details class="group my-8 border border-stone-200 rounded-lg overflow-hidden">
+	<summary
+		class="list-none cursor-pointer select-none px-5 py-3 font-sans text-sm font-medium text-stone-600 hover:text-ink flex items-center gap-2 [&::-webkit-details-marker]:hidden"
+	>
+		<span class="transition-transform group-open:rotate-90">&#9656;</span>
+		<span class="group-open:hidden">Show answer</span>
+		<span class="hidden group-open:inline">Hide answer</span>
+	</summary>
+	<div class="border-t border-stone-200 px-5 py-4 space-y-4">
+		<div class="font-sans text-[10.5px] uppercase tracking-[0.14em] text-stone-400">A prompt that works</div>
+		<div class="relative bg-stone-800 rounded-lg p-4 pr-20">
+			<div class="font-mono text-[13px] text-stone-100 whitespace-pre-wrap leading-relaxed">{prompt}</div>
+			<button
+				type="button"
+				data-copy={prompt}
+				class="absolute top-2 right-2 px-2 py-1 rounded text-xs font-sans bg-stone-700 text-stone-300 hover:bg-stone-600 hover:text-white cursor-pointer"
+			>
+				Copy
+			</button>
+		</div>
+		<div class="prose space-y-3">
+			<slot />
+		</div>
+	</div>
+</details>
+
+<script>
+	for (const button of document.querySelectorAll<HTMLButtonElement>("button[data-copy]")) {
+		button.addEventListener("click", async () => {
+			await navigator.clipboard.writeText(button.dataset.copy ?? "");
+			button.textContent = "Copied";
+			setTimeout(() => (button.textContent = "Copy"), 1500);
+		});
+	}
+</script>

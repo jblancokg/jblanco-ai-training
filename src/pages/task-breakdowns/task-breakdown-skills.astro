@@ -1,0 +1,377 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Task Breakdown Skills - AI Training Guide">
+  <PageShell chapterId="task-breakdowns" subChapterId="task-breakdown-skills">
+    <div class="prose space-y-6">
+      <p>
+        You've seen how providing context and referencing requirements improves
+        task breakdowns. But if you're doing this regularly, you'll notice
+        yourself repeating the same instructions: "follow the existing feature
+        pattern," "size tasks for 2-3 days," "include acceptance criteria,"
+        "reference the requirements doc." That repetition is a signal that it's
+        time to build a skill.
+      </p>
+
+      <p>
+        If you haven't read about skills yet, check out the <a
+          href="/requirements-writing/skills"
+          >Skills page</a
+        > in the Requirements Writing chapter for the fundamentals. Here, we'll
+        build on that foundation with a skill specifically designed for task breakdowns.
+      </p>
+
+      <h3>What a Task Breakdown Skill Does</h3>
+
+      <p>
+        A task breakdown skill packages all of your team's conventions for
+        creating development tasks into a single set of instructions the AI
+        loads on demand. Instead of typing out your preferences every time, you
+        say "break down this feature into tasks" and the AI automatically knows:
+      </p>
+
+      <ul class="list-disc pl-5 space-y-2">
+        <li>
+            <strong class="text-stone-800">Where to find requirements</strong> and
+            how to read them
+        </li>
+        <li>
+            <strong class="text-stone-800">How to structure each task</strong> including
+            which fields to include
+        </li>
+        <li>
+            <strong class="text-stone-800">How to size and scope tasks</strong> based
+            on your team's capacity
+        </li>
+        <li>
+            <strong class="text-stone-800">Where to save the output</strong> and what
+            format to use
+        </li>
+        <li>
+            <strong class="text-stone-800">Your team's preferences</strong> like vertical
+            slicing, dependency tracking, and linking back to requirements
+        </li>
+      </ul>
+
+      <h3>Anatomy of a Task Breakdown Skill</h3>
+
+      <p>
+        Like any skill, this lives in a folder with a <code>SKILL.md</code> file.
+        The description tells the AI when to activate it, and the instructions tell
+        it how to do the work.
+      </p>
+
+      <div
+        class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8 font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap"
+      >
+        {
+          `ticket-writing/
+├── SKILL.md
+└── references/
+    └── templates.md`
+        }
+      </div>
+
+      <p>The key sections of the SKILL.md include:</p>
+
+      <div class="space-y-4 my-8">
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-stone-800 mb-1">
+            Trigger description
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            The frontmatter description tells the AI when to load this skill. Be
+            specific about the triggers: "break down into tasks," "create
+            tickets," "plan the work for this feature." Include the informal
+            ways people phrase these requests too.
+          </p>
+        </div>
+
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-stone-800 mb-1">
+            Step 0: Understand the work
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            Before generating any tasks, the skill instructs the AI to find and
+            read the feature spec and any relevant decision records (so the tasks
+            respect existing constraints), understand the codebase context (check
+            AGENTS.md, look at existing patterns), and ask the user how they want
+            to work through the breakdown.
+          </p>
+        </div>
+
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-stone-800 mb-1">
+            Breakdown philosophy
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            This is where your team's preferences go. Prefer vertical slices
+            over horizontal layers? Tasks sized for 2-3 days? Feature ownership
+            over isolated tasks? Explicit dependency tracking? Document these
+            preferences once and the AI follows them every time.
+          </p>
+        </div>
+
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-stone-800 mb-1">
+            Task template
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            A golden master for what each task should look like. Include the
+            fields you care about: title, context, what to build, acceptance
+            criteria, dependencies, and estimated scope. The AI will follow this
+            structure consistently.
+          </p>
+        </div>
+
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-stone-800 mb-1">
+            Output location
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            Where tasks get saved. In a <code>docs/tasks/</code> folder? As individual
+            ticket files in <code>docs/tickets/</code>? As a single markdown
+            file? Define the convention and the AI handles the file management.
+          </p>
+        </div>
+      </div>
+
+      <h3>Example Output</h3>
+
+      <p>
+        Here's what a task from the sample project's breakdown looks like. This
+        was generated by the ticket-writing skill from the todo list
+        requirements:
+      </p>
+
+      <div
+        class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8 font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap"
+      >
+        {
+          `## Task 4: Build TodoCard Dashboard Widget
+
+**Description**
+
+Create a compact card component for the dashboard
+home page that shows a quick summary of the user's
+todos. It will display the count of active todos
+and list the 5 most recently created incomplete items.
+
+**Acceptance Criteria**
+
+- [ ] TodoCard component at
+      src/features/todos/TodoCard.tsx
+- [ ] Displays a count of active todos
+- [ ] Lists up to 5 most recent incomplete todos
+- [ ] Each listed todo shows title and due date
+- [ ] Includes a "View all" link to /todos
+- [ ] Uses shadcn Card for consistent styling
+- [ ] Updates reactively when todos change
+
+**Files to Create or Modify**
+
+- src/features/todos/TodoCard.tsx
+- src/routes/index.tsx (add TodoCard to grid)
+
+**Dependencies**
+
+- Dashboard Shell Task 5 (home page with grid)
+- Task 2 (useTodos hook)
+
+**Estimated Scope:** Small (2-3 days)`
+        }
+      </div>
+
+      <p>
+        Notice how the task references specific file paths, names the components
+        to use, lists concrete acceptance criteria, and maps out dependencies.
+        This level of detail comes from the skill knowing about the project
+        structure and the team's conventions.
+      </p>
+
+      <h3>Building Your Own</h3>
+
+      <p>
+        The fastest way to build a task breakdown skill is to start with one
+        that's close to what you want and adapt it. The company maintains a
+        shared skills repository with a ticket-writing skill you can use as a
+        starting point:
+      </p>
+
+      <div
+        class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8"
+      >
+        <div class="text-sm font-semibold text-stone-800 mb-2">
+          Company Skills Repository
+        </div>
+        <p class="text-sm text-stone-600 leading-relaxed mb-3">
+          Browse the collection of pre-built skills your team has put together.
+          The ticket-writing skill is a good starting point for task breakdowns.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a
+            href="https://github.com/konradgroup/ai-skills"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 text-sm font-medium"
+          >
+            github.com/konradgroup/ai-skills
+          </a>
+        </div>
+        <div class="flex flex-wrap gap-3 mt-3">
+          <a
+            href="/downloads/ticket-writing-skill.zip"
+            download
+            class="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-md hover:bg-violet-700 transition-colors no-underline"
+          >
+            <span>&#8595;</span> Download the Sample Task Breakdown Skill
+          </a>
+        </div>
+      </div>
+
+      <p>When adapting a skill, focus on these customizations:</p>
+
+      <div class="space-y-3 my-8">
+        <div class="flex gap-3 items-start">
+          <div
+            class="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5"
+          >
+            1
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            <strong class="text-stone-800">Adjust the task template</strong> to match
+            your team's ticketing format. If you use Jira, the fields should map to
+            your Jira issue types. If you track work in markdown files, design the
+            format for readability.
+          </p>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div
+            class="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5"
+          >
+            2
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            <strong class="text-stone-800">Set your sizing conventions</strong>.
+            Some teams size in hours, others in story points, others in t-shirt
+            sizes. Whatever your team uses, define it in the skill so the AI
+            estimates consistently.
+          </p>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div
+            class="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5"
+          >
+            3
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            <strong class="text-stone-800"
+              >Define where requirements live</strong
+            >. If your team always puts feature specs in <code
+              >docs/features/</code
+            >, tell the skill that. If they're in Confluence, explain how to
+            find them.
+          </p>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div
+            class="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5"
+          >
+            4
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            <strong class="text-stone-800">Include a golden master</strong>. Put
+            an example of a well-written task breakdown in the <code
+              >references/</code
+            > folder. The AI will match the quality and detail of what you show it.
+          </p>
+        </div>
+      </div>
+
+      <h3>Combining Skills for a Complete Workflow</h3>
+
+      <p>
+        The real power shows up when you chain skills together. A typical flow
+        looks like this:
+      </p>
+
+      <div class="space-y-3 my-8">
+        <div class="flex gap-3 items-start">
+          <div
+            class="w-6 h-6 rounded-full bg-orange-100 text-orange-700 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5"
+          >
+            1
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            <strong class="text-stone-800">Requirements skill</strong> generates a
+            structured requirements document from a conversation about a feature
+          </p>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div
+            class="w-6 h-6 rounded-full bg-orange-100 text-orange-700 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5"
+          >
+            2
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            <strong class="text-stone-800">Task breakdown skill</strong> reads that
+            requirements document and produces a set of development tasks
+          </p>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div
+            class="w-6 h-6 rounded-full bg-orange-100 text-orange-700 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5"
+          >
+            3
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            <strong class="text-stone-800">Developer picks up a task</strong> and
+            the AI already has full context from the AGENTS.md, requirements, and
+            task description
+          </p>
+        </div>
+      </div>
+
+      <p>
+        Each step in this chain feeds naturally into the next. The requirements
+        skill produces output in a format the task breakdown skill knows how to
+        read. The task breakdown skill produces output that gives developers
+        clear starting points. No information is lost between handoffs because
+        it's all in the repo.
+      </p>
+
+      <Callout variant="success" title="Mental model">
+        <p>
+          Think of skills as specialized team members. Your requirements skill
+          is the business analyst who writes specs. Your task breakdown skill is
+          the tech lead who turns specs into work items. Your AGENTS.md is the
+          onboarding doc they all read on day one. They each do their job well
+          because they have clear instructions, and they work together because
+          the outputs are designed to chain.
+        </p>
+      </Callout>
+
+      <Callout variant="tip" title="Practical tip">
+        <p>
+          Don't try to build the perfect skill on the first attempt. Start
+          simple: a basic task template and a few instructions about your
+          conventions. Use it for a real breakdown, notice what's missing or
+          wrong in the output, and update the skill. After 3-4 iterations,
+          you'll have a skill that reliably produces task breakdowns your team
+          can actually work from.
+        </p>
+      </Callout>
+
+      <p>
+        In the <a
+          href="/practical-exercise/get-started"
+          >Practical</a
+        > section, you'll use these skills hands-on with the sample project, taking
+        a feature from requirements through task breakdown and into implementation.
+      </p>
+    </div>
+  </PageShell>
+</MainLayout>

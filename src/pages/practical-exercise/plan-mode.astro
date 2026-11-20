@@ -1,0 +1,221 @@
+---
+import Callout from "../../components/Callout.astro";
+import InlineCommand from "../../components/InlineCommand";
+import PageShell from "../../components/PageShell.astro";
+import PlanningTrajectory from "../../components/PlanningTrajectory";
+import TerminalBlock from "../../components/TerminalBlock";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Plan Mode & The Notepad - AI Training Guide">
+  <PageShell chapterId="practical-exercise" subChapterId="plan-mode">
+    <div class="prose space-y-2">
+      <p>
+        You've successfully implemented the Habit Tracker: a self-contained feature with clear inputs and outputs.
+      </p>
+      <p>
+        Now we're moving to a far more complex feature: <strong>The Notepad</strong>.
+      </p>
+
+      <section>
+        <h3 class="text-xl font-bold text-stone-800 mt-4 mb-4">Why the Notepad is Different</h3>
+        <p>
+          In this project, the Notepad is the most structurally complex feature you will build. Unlike the Habit Tracker, which is fairly self-contained, the Notepad touches everything:
+        </p>
+
+        <ul class="list-disc pl-5 space-y-2 text-stone-600 mt-4 mb-4">
+            <li><strong>Dual Interface:</strong> It exists as both a scratchpad widget on the Dashboard <i>and</i> a full-featured management page at <code>/notes</code>.</li>
+            <li><strong>Cross-Component State:</strong> Typing a note on the Dashboard needs to be accessible on the full page, and converting a scratchpad note to a saved note involves moving data between contexts.</li>
+            <li><strong>Autosave & Persistence:</strong> It requires debounced saving to local storage (or a backend) to prevent data loss if the browser closes.</li>
+            <li><strong>Layout Complexity:</strong> The full page view uses a sidebar + editor layout that is architecturally different from the grid-based dashboard.</li>
+        </ul>
+
+        <p>
+          This is an excellent example of a feature where jumping straight to agent mode leads to disaster. If you just ask the AI to "build the notepad", you are leaving important architectural decisions up to the AI, which can lead to unpredictable and often error-prone outcomes.
+        </p>
+      </section>
+
+      <section>
+        <h3 class="text-xl font-bold text-stone-800 mt-8 mb-4">Exercise 1: Agent Mode</h3>
+        <p>
+          First, we would like you to try building out the Notepad widget entirely in agent mode.
+        </p>
+        <p class="mb-4">
+            <strong>Goal:</strong> Attempt to implement the Notepad feature using only agent mode, with a single prompt.
+        </p>
+
+        <TerminalBlock
+            title="The Naive Prompt"
+            lines={[
+                { type: "command", command: "Implement the Notepad feature based on the tasks in @docs/tasks/notepad.md and requirements in @docs/requirements/notepad.md" }
+            ]}
+            client:visible
+        />
+
+        <p class="mt-4 mb-4">
+            <strong>Observe what happens:</strong>
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-stone-600 mb-4">
+            <li>Does it ask clarifying questions about where to store the state?</li>
+            <li>Does it realize the dashboard widget and the full page share data?</li>
+            <li>Does it create shared components, or duplicate code?</li>
+        </ul>
+        <p>
+            Likely, it will start coding immediately. Let it run for a bit. Once you see it making questionable architectural choices (or if it gets stuck in a loop), stop.
+        </p>
+      </section>
+
+      <section>
+        <h3 class="text-xl font-bold text-stone-800 mb-2 mt-4">Reset</h3>
+        <p class="mb-4">
+            Before moving on, let's reset.
+        </p>
+        <TerminalBlock
+            title="Reset"
+            lines={[
+                { type: "command", command: "git reset --hard HEAD" },
+                { type: "comment", text: "# OR /rewind if you prefer" }
+            ]}
+            client:visible
+        />
+      </section>
+
+      <section>
+        <p class="mt-4 mb-4">
+          Before moving forward with plan mode, here is an example prompt along with its output. After reviewing the agent mode results, consider what questions we could have asked during plan mode to prevent the poor outcome.
+        </p>
+        <p>
+          For this example, we asked the AI to complete <strong>Task 7: Implement Notes Autosave and Persistence</strong>. As the name describes, this task involved building out one of the more complicated features of the notepad: autosave.
+        </p>
+
+        <PlanningTrajectory
+            client:visible
+            prompt="Please implement Task 7: Implement Notes Autosave and Persistence from @docs/tasks/notepad.md"
+            response={`// Debounced save function
+const debouncedSave = useCallback(debounce(async () => {
+  // Only save if there's a note ID, unsaved changes, and data to save
+  if (!noteToSaveRef.current || !noteToSaveRef.current.id || !isDirty) {
+    return;
+  }
+  const success = await onSave(noteToSaveRef.current);
+  if (success) {
+    // After a successful save, reset the dirty flag
+    setIsDirty(false);
+  }
+}, AUTOSAVE_INTERVAL / 3), [onSave, isDirty, setIsDirty]);
+
+// Autosave timer effect
+useEffect(() => {
+  // Only start the timer if a note is loaded and there are unsaved changes
+  if (!note || !isDirty || !noteToSaveRef.current?.id) {
+    return;
+  }
+
+  const intervalId = setInterval(() => {
+    if (noteToSaveRef.current && isDirty) {
+      debouncedSave(); // Trigger the debounced save
+    }
+  }, AUTOSAVE_INTERVAL);
+
+  return () => clearInterval(intervalId);
+}, [note, isDirty, debouncedSave]);`}
+            critique="The current approach mixes periodic saving and saving after inactivity, combining two autosave strategies. This adds unnecessary complexity, redundant executions, and unpredictable timing as well as a variety of errors into the resulting code. In this flow, if a user stops typing they might wait up to 40 seconds for a save and if they keep typing, the autosave wakes up every 30 seconds for no reason."
+            planQuestions={[
+                {
+                    question: "What is your high-level plan for implementing autosave?",
+                    answerExample: "I propose a custom hook that monitors changes. We need to determine the best strategy to trigger saves to ensure data safety without performance costs."
+                },
+                {
+                    question: "Should autosave be interval-based or debounce-based? Compare both and justify the choice.",
+                    answerExample: "Debounce-based is better for single-user contexts to avoid unnecessary writes; interval-based is preferred for collaborative real-time apps. Given this is a personal dashboard, I recommend debounce."
+                },
+                {
+                    question: "Let's use a debounced-based approach then. Walk through a timeline of user behavior (typing, pausing, navigating) and specify exactly when saves occur.",
+                    answerExample: "User types -> 1s pause -> Save triggers. If user navigates away before pause -> Save triggers immediately."
+                },
+                {
+                    question: "What is the simplest implementation that satisfies the requirements without unnecessary complexity?",
+                    answerExample: "A single useAutosave hook that wraps a debounced callback. No need for a separate interval timer."
+                }
+            ]}
+        />
+      </section>
+
+      <section>
+        <h3 class="text-xl font-bold text-stone-800 mt-8 mb-4">Exercise 2: The "Architect" (Plan Mode)</h3>
+        <p>
+            This time, we will treat the AI as a <strong>Senior Architect</strong> before we treat it as a Developer.
+        </p>
+        <p>
+            Switch to <strong>plan mode</strong> (or use a prompt that enforces planning).
+        </p>
+
+        <Callout variant="tip" title="Plan Mode">
+            <p>
+                In Gemini CLI, you can explicitly enter plan mode using the <InlineCommand command="/settings" client:visible /> command and setting <strong>Default Approval Mode</strong> to <code>plan</code>.
+            </p>
+        </Callout>
+
+        <TerminalBlock
+            title="The Architect Prompt"
+            lines={[
+                { type: "command", command: "Review @docs/requirements/notepad.md and @docs/tasks/notepad.md. Create a detailed architectural plan for the Notepad feature. Focus on: 1. State management (shared vs local), 2. Component hierarchy, 3. The data flow between Dashboard and Notes page. Do not write code yet." }
+            ]}
+            client:visible
+        />
+
+        <p class="mt-4">
+            <strong>Review the Plan:</strong>
+        </p>
+        <p>
+            Do not just blindly accept the first plan. This is your chance to catch architectural bugs before they become code bugs.
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-stone-600 mb-2">
+            <li><strong>Question the State:</strong> "You proposed using local state for the widget. How will that sync with the full notes page?"</li>
+            <li><strong>Check Reusability:</strong> "Are you creating a shared `NoteEditor` component used in both places?"</li>
+            <li><strong>Verify Persistence:</strong> "Where is the autosave logic living?"</li>
+        </ul>
+
+        <p>
+            Iterate on the plan until you are satisfied.
+        </p>
+
+        <Callout variant="tip" title="Persist Your Plan">
+            <p>
+                Once you are satisfied with the architecture, feel free to create a new directory in <code>docs/</code> (e.g., <code>docs/plans/</code>) and ask the AI to write the finalized plan into a markdown file there.
+            </p>
+            <p>
+              This acts as <strong>external memory</strong>: it allows you to restart your session without losing context, and provides documentation for other developers to understand the reasoning behind your implementation decisions.
+            </p>
+        </Callout>
+      </section>
+
+      <section>
+        <h3 class="text-xl font-bold text-stone-800 mt-6 mb-4">Execute the Plan</h3>
+        <p class="mb-4">
+            Once you have gone over the plan and asked all clarifying architectural questions, <strong>switch back to agent mode</strong> (select <code>Default</code> in <strong>Default Approval Mode</strong>) and complete the outstanding tasks for the notebook feature. Reminder to use the AI to commit frequently, perform validation steps, and generate a descriptive PR. 
+        </p>
+        <TerminalBlock
+            title="Execution"
+            lines={[
+                { type: "command", command: "The plan looks good. Proceed with implementation based off the plan, starting with task 1 in @docs/tasks/notepad.md." }
+            ]}
+            client:visible
+        />
+        <p class="mt-4 mb-8">
+            You will likely find that the implementation is smoother, faster, and requires fewer corrections because the "thinking" was done upfront.
+        </p>
+      </section>
+
+      <section class="border-t border-stone-200">
+        <h3 class="text-xl font-bold text-stone-800 mb-4 mt-6">Conclusion</h3>
+        <p>
+            For simple tasks (like the Habit Tracker), agent mode works fine. But for features that involve architectural trade-offs, shared state, or complex data flows (like the Notepad), plan mode is a necessity.
+        </p>
+        <p>
+            You are moving from treating the AI as an autocomplete tool to treating it as a collaborative partner. 
+        </p>
+      </section>
+    </div>
+  </PageShell>
+</MainLayout>

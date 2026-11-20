@@ -1,0 +1,276 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="AGENTS.md - AI Training Guide">
+  <PageShell chapterId="task-breakdowns" subChapterId="agents-md">
+    <div class="prose space-y-6">
+      <p>
+        Before asking an AI to break down a feature into tasks, it needs to
+        understand your project. What's the tech stack? How is the code
+        organized? What conventions does the team follow? Without this context,
+        the AI produces generic task lists that don't fit your actual codebase.
+      </p>
+
+      <p>
+        This is where an <code>AGENTS.md</code> file comes in. It's a lightweight
+        markdown file at the root of your repository that gives the AI a quick briefing
+        about your project. Think of it as the "new hire orientation" document, but
+        for the AI. AGENTS.md is now an open standard that most AI coding tools read
+        directly. Some tools also look for their own file name (like <code>CLAUDE.md</code>),
+        which we cover at the end of this page.
+      </p>
+
+      <h3>What Goes in an AGENTS.md</h3>
+
+      <p>
+        Keep it short. The AI reads this file at the start of every session, and
+        it counts against your context window. A bloated AGENTS.md wastes tokens
+        on information the AI doesn't need for the current task. Aim for a file
+        that covers the essentials and nothing more.
+      </p>
+
+      <div class="space-y-4 my-8">
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-stone-800 mb-1">
+            Project overview
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            One or two sentences about what the project is. Just enough so the
+            AI understands the domain. "A browser-only personal dashboard app.
+            No backend, all data lives in localStorage."
+          </p>
+        </div>
+
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-stone-800 mb-1">
+            Tech stack
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            List the key technologies: framework, language, styling approach,
+            package manager, any major libraries.
+          </p>
+        </div>
+
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-stone-800 mb-1">
+            Project structure
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            A brief map of where things live. Which folder has routes? Where do
+            components go? Where do feature-specific files live?
+          </p>
+        </div>
+
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-stone-800 mb-1">
+            Key patterns and conventions
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            How does the team structure new features? Are there shared hooks or
+            utilities the AI should use? Do you see the AI consistently using a bad pattern? (fix it here) What naming conventions matter? Include
+            the patterns you want the AI to follow, not every pattern that
+            exists.
+          </p>
+        </div>
+
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-stone-800 mb-1">Commands</div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            How to run the dev server, build, lint, and test. The AI needs these
+            when it's working in agent mode and wants to verify its changes. (hint, add in that you always have the pnpm dev command (or other commands you use) running so it doesn't try to do it for you)
+          </p>
+        </div>
+      </div>
+
+      <h3>A Real Example</h3>
+
+      <p>
+        Here's the AGENTS.md from the sample project we'll use in the practical
+        exercises. Notice how it covers everything the AI needs without going
+        overboard:
+      </p>
+
+      <div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8 font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`# Personal Dashboard
+
+A browser-only personal dashboard for managing your
+day at a glance. No backend, no database. All data lives in
+localStorage.
+
+## Tech Stack
+- Vite - bundler and dev server
+- React 19 with TypeScript (strict mode)
+- TanStack Router - file-based routing (src/routes/)
+- Tailwind CSS v4
+- shadcn/ui - component library (src/components/ui/)
+- pnpm - package manager
+
+## Commands
+- pnpm dev - start dev server
+- pnpm build - production build
+- pnpm lint - run ESLint
+- pnpm typecheck - TypeScript type checking
+
+## Project Structure
+src/
+├── components/       # Shared UI
+│   └── ui/           # shadcn/ui components
+├── features/         # Feature-based folders
+├── hooks/            # Shared React hooks
+├── lib/              # Shared utilities
+├── routes/           # TanStack Router routes
+└── index.css         # Tailwind imports
+
+## Key Patterns
+- Each feature folder contains types, hooks,
+  components, and seed data
+- localStorage wrapper at src/lib/storage.ts
+- useStorage hook at src/hooks/use-storage.ts
+- Seed data uses relative dates so it always
+  looks fresh`}</div>
+
+      <p>
+        That's about 40 lines. The AI now knows it's a React app with file-based
+        routing, that features are self-contained folders, and that there's a
+        shared storage hook it should use. When you ask it to break down a new
+        feature into tasks, it can reference these patterns and produce tasks
+        that actually match the codebase.
+      </p>
+
+      <h3>What to Leave Out</h3>
+
+      <p>
+        The temptation is to document everything. Resist it. Every line in
+        AGENTS.md is loaded into context on every conversation, whether it's
+        relevant or not.
+      </p>
+
+      <Callout variant="warning" title="Leave these out">
+        <ul class="space-y-1 list-none p-0 m-0">
+          <li>
+            <span class="font-bold">-</span> Complete API documentation (the AI
+            can read files as needed)
+          </li>
+          <li>
+            <span class="font-bold">-</span> Historical decisions or changelog entries
+          </li>
+          <li>
+            <span class="font-bold">-</span> Detailed setup instructions for new
+            developers (put those in a README)
+          </li>
+          <li>
+            <span class="font-bold">-</span> Every library and its version number
+          </li>
+          <li>
+            <span class="font-bold">-</span> Lengthy style guides (link to them
+            instead)
+          </li>
+        </ul>
+      </Callout>
+
+      <p>
+        If you find your AGENTS.md creeping past 100 lines, that's a sign to
+        trim it back. Move detailed information into separate documents and
+        reference them when needed. Skills (covered later) are a better place
+        for task-specific instructions.
+      </p>
+
+      <h3>Linking to Sub-Documentation</h3>
+
+      <p>
+        Here's a technique that keeps your AGENTS.md lean while still giving the
+        AI access to detailed information: link to other documents instead of
+        inlining them. The AI is perfectly capable of deciding when it needs to
+        read a linked file and opening it on its own.
+      </p>
+
+      <p>
+        For example, instead of pasting your entire API design guide into
+        AGENTS.md, add a single line:
+      </p>
+
+      <div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8 font-mono text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">{`## Documentation
+- API conventions: see docs/api-conventions.md
+- Component patterns: see docs/component-guide.md
+- Database migrations: see docs/migrations.md
+- Testing strategy: see docs/testing-approach.md`}</div>
+
+      <p>
+        When the AI encounters a task that involves building an API endpoint, it
+        will read <code>docs/api-conventions.md</code> on its own because it knows
+        the file is relevant. When it's working on a UI component, it'll pull in the
+        component guide instead. The AI only loads what it needs for the task at hand,
+        keeping the context window focused.
+      </p>
+
+      <p>Add a 1 sentence description next to each link so the AI can judge relevance without opening the file. e.g. "API conventions: see docs/api-conventions.md" </p>
+
+      <Callout variant="tip" title="Practical tip">
+        <p>
+          Ask the AI to help you write your AGENTS.md. Open a chat in your
+          project folder and say: "Look at this codebase and draft an AGENTS.md
+          that covers the tech stack, project structure, and key patterns. Keep
+          it under 80 lines." Review and edit the result. The AI is surprisingly
+          good at summarizing codebases, though you'll want to verify it didn't
+          miss anything important or include things that aren't accurate.
+        </p>
+      </Callout>
+
+      <h3>Tool-Specific File Names</h3>
+
+      <p>
+        Start with <code>AGENTS.md</code>. It's an open standard, now stewarded by
+        the Linux Foundation, that most AI coding tools read directly, including
+        OpenAI Codex, Cursor, GitHub Copilot, and Gemini CLI. One file covers the
+        majority of your team's tools. Add a tool-specific file only when a tool
+        needs something extra:
+      </p>
+
+      <ul class="list-disc pl-5 space-y-2">
+        <li>
+            <strong class="text-stone-800">Claude Code / Claude Cowork</strong> reads{" "}
+            <code>AGENTS.md</code>, but also looks for <code>CLAUDE.md</code> in the
+            project root and prefers it for Claude-specific memory. If you keep both,
+            put shared context in AGENTS.md and Claude-only notes in CLAUDE.md.
+        </li>
+        <li>
+            <strong class="text-stone-800">Cursor</strong> reads <code>AGENTS.md</code>.
+            For Cursor-specific rules, use <code>.mdc</code> files in the <code
+              >.cursor/rules/</code
+            > folder, which can be scoped to load only for matching file patterns so
+            they don't consume context on every request. The older single-file <code
+              >.cursorrules</code
+            > is deprecated and is silently ignored by Cursor's agent (now the default),
+            so don't rely on it in new projects.
+        </li>
+      </ul>
+
+      <p>
+        You can have multiple files if your team uses different tools, but keep the
+        shared content in one place. A common setup is a single <code>AGENTS.md</code>{" "}
+        with small tool-specific files layered on top for the few things that differ.
+      </p>
+
+      <Callout variant="info" title="Remember">
+        <p>
+          The AGENTS.md file is loaded into every conversation. Keep it lean,
+          keep it accurate, and update it when your project changes. A stale
+          AGENTS.md is worse than no AGENTS.md because it actively misleads the
+          AI.
+        </p>
+      </Callout>
+
+      <h3>Further Reading</h3>
+      <ul class="text-sm space-y-2 my-4">
+        <li>
+          <a href="https://agents.md" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">AGENTS.md</a> — the open standard for agent instruction files, stewarded under the Linux Foundation
+        </li>
+        <li>
+          <a href="https://cursor.com/docs/rules" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">Cursor Rules</a> — Cursor's docs on <code>.cursor/rules</code> <code>.mdc</code> files and AGENTS.md support
+        </li>
+      </ul>
+    </div>
+  </PageShell>
+</MainLayout>

@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: diva.konrad.dev
+          username: ubuntu
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd /var/www/ai-training-2026/
+            git checkout .astro/types.d.ts
+            git checkout package.json
+            git checkout pnpm-lock.yaml
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy-ai-training" git pull
+            pnpm install --frozen-lockfile
+            pnpm build

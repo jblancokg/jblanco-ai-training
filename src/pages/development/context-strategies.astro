@@ -1,0 +1,172 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Context Strategies - AI Training Guide">
+	<PageShell chapterId="development" subChapterId="context-strategies">
+		<div class="prose space-y-6">
+			<p>
+				Every time you interact with an AI coding tool, you're working inside a context window: a fixed amount of text the model can "see" at once.
+				Everything in your conversation, every file it reads, every error it encounters, every response it gives, all of it fills that window.
+				Frontier models have grown large, with the current leaders (Claude Opus 4.8, GPT-5.5, Gemini 3.x) offering 1M tokens or more.
+				But the window is still finite, and tools like Claude Code and Cursor start compressing your conversation before you reach the edge.
+				When that happens, things start getting lost. As you'll see below, a big window is not the safety net it looks like.
+			</p>
+
+			<h3>Start Fresh Between Tasks</h3>
+
+			<p>
+				<strong>Start a new conversation for each distinct task</strong>.
+				When you finish implementing a feature and move on to fixing a bug, open a new chat. When you're done with the bug and want to write tests,
+				open another one. Each conversation should have one clear purpose.
+			</p>
+
+			<p>
+				As a conversation grows, the AI's understanding of what you're doing becomes diluted. Early instructions fade.
+				Context from a previous task bleeds into the current one. The AI might try to "fix" something it saw three tasks ago, or apply a pattern
+				from an unrelated change. A fresh conversation gives the AI a clean slate focused entirely on the task at hand.
+			</p>
+
+			<Callout variant="tip" title="Practical tip">
+				<p>
+					A good rule of thumb: if you'd create a separate Git commit for it, it should be a separate conversation.
+					Commit your work, then start fresh. If you have your requirements or plans broken into multiple tasks, start a new conversation for each task.
+				</p>
+			</Callout>
+
+			<h3>Context Windows Fill Up Fast</h3>
+
+			<p>
+				Most people underestimate how quickly the context window fills. Your prompts are only a small piece of it. The bulk comes from{" "}
+				<strong>tool activity</strong>: every file the AI reads, every command it runs, every search result it processes. A single file read can
+				consume thousands of tokens. Ask the AI to explore a few files, run a build, and read the error output, and you've used a significant
+				chunk of your window before any real work has started.
+			</p>
+
+			<p>
+				When the window gets too full, tools like Claude Code and Cursor will <strong>compress</strong> earlier parts of the conversation.
+				This means the AI creates a summary of what happened and discards the original details. In theory this preserves the important bits.
+				In practice, nuance gets lost. That specific edge case you mentioned early on? The particular naming convention you asked it to follow?
+				The subtle constraint in your requirements? These details tend to get compressed away.
+			</p>
+
+			<Callout variant="warning" title="Watch for these signs">
+				<p>
+					If the AI starts contradicting earlier instructions, re-reading files it already saw, or "forgetting" constraints you clearly stated,
+					your context has likely been compressed. This is your signal to commit what you have and start a new conversation.
+				</p>
+			</Callout>
+
+			<h3>A Bigger Window Isn't the Answer</h3>
+
+			<p>
+				It's tempting to look at a 1M-token window and assume you can stop worrying about context. You can't. Models don't use their
+				context uniformly, and their reliability drops as the window fills, well before it's full. Chroma's 2025{" "}
+				<a href="https://research.trychroma.com/context-rot" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener noreferrer">context rot study</a>{" "}
+				tested 18 frontier models across Claude, GPT, and Gemini and found every one of them degraded as input grew, even on simple retrieval tasks.
+				A model's <em>effective</em> context is often a fraction of its advertised maximum.
+			</p>
+
+			<p>
+				This is the key thing to internalize: the goal isn't to fit as much as possible into a huge window, it's to keep what the AI sees
+				focused and relevant. A short, clean conversation outperforms a long, cluttered one, even when both are nowhere near the limit. That's
+				why the strategies on this page matter more as windows get bigger, not less.
+			</p>
+
+			<h3>Recency Bias</h3>
+
+			<p>
+				Even before compression kicks in, AI models naturally give more weight to what appeared recently in the conversation (and somewhat what was said at the beginning of the conversation).
+				Instructions you gave at the start lose influence as new messages pile on top. It's how
+				attention mechanisms work in these models.
+			</p>
+
+			<p>
+				If something matters, re-state it when it's relevant. When you're about to start a step that
+				touches the database, remind the AI of your constraint right then. Don't rely on it remembering something from the top of a
+				long conversation.
+			</p>
+
+			<h3>Reference Files</h3>
+
+			<p>
+				When you need the AI to work with a file, reference it by path rather than copying it, or just describing its contents.
+				Tools like Claude Code and Cursor can read files on demand.
+			</p>
+
+			<div class="space-y-4 my-8">
+				<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Instead of this</div>
+					<p class="font-mono text-sm text-stone-700 leading-relaxed">
+						hey can you update the user model to require a phone number?
+					</p>
+				</div>
+				<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Do this</div>
+					<p class="font-mono text-sm text-stone-700 leading-relaxed">
+						"Look at src/models/user.ts and update the validation to require a phone number."
+					</p>
+				</div>
+			</div>
+
+			<p>
+				The same logic applies to requirements documents, tickets, and any other reference material. If it's accessible as a file
+				or through an integration (like Confluence or Jira), point the AI to the source rather than pasting the text. The AI can
+				pull in exactly what it needs, when it needs it.
+			</p>
+
+			<h3>Clean Up Noisy Linters and Test Output</h3>
+
+			<p>
+				One often overlooked source of context bloat is verbose output from linters and test runners. If your build spits out
+				hundreds of warnings, or your test suite logs walls of deprecation notices, all of that flows into the context window
+				every time the AI runs those commands.
+			</p>
+
+			<p>
+				Fixing these warnings is a double win. Your project gets healthier (warnings exist for a reason), and the AI gets
+				cleaner output from tools. If you can't fix them all right away, consider configuring your
+				linter or test runner to suppress known warnings so the output stays concise.
+			</p>
+
+			<h3>Planning Modes</h3>
+
+			<p>
+				The tools themselves are converging on the same approach. Many AI coding tools have started adopting a pattern where they
+				generate a detailed plan, then <strong>clear the context and restart from just the plan</strong>. They do this because
+				a focused, clean context produces better results than a long, cluttered one.
+			</p>
+
+			<p>
+				Sub-agents follow the same idea from the other direction: you hand off a big exploration (say, "figure out how auth works across these ten files")
+				to a separate agent that burns through its own context and hands back only a short summary, keeping your main conversation clean.
+			</p>
+
+			<p>
+				Skills and custom instructions (like CLAUDE.md files or Cursor rules) work on the same principle. Instead of explaining your project
+				conventions in every conversation, you write them once in a file. The AI reads them fresh at the start of each session, right when
+				they're most prominent in the context. No compression, no recency bias pushing them down.
+			</p>
+
+			<p>
+				The strategies on this page are about doing manually what these tools are trying to automate: keeping the context
+				focused, relevant, and clean. Start fresh often. Let the AI read things on its own schedule. Re-state what matters when it matters.
+			</p>
+
+			<h3>Further Reading</h3>
+			<ul class="space-y-2 text-sm text-stone-600 my-4">
+				<li>
+					<a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener noreferrer">Effective context engineering for AI agents</a> — Anthropic on treating context as a finite resource (Sept 2025)
+				</li>
+				<li>
+					<a href="https://research.trychroma.com/context-rot" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener noreferrer">Context Rot: How Increasing Input Tokens Impacts LLM Performance</a> — Chroma's study across 18 frontier models (July 2025)
+				</li>
+				<li>
+					<a href="https://platform.claude.com/docs/en/build-with-claude/context-windows" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener noreferrer">Context windows</a> — Anthropic docs on how the window works and current model sizes
+				</li>
+			</ul>
+		</div>
+	</PageShell>
+</MainLayout>

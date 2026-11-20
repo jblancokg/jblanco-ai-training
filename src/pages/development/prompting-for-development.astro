@@ -1,0 +1,392 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Prompting for Development - AI Training Guide">
+	<PageShell chapterId="development" subChapterId="prompting-for-development">
+		<div class="prose space-y-6">
+			<p>
+				The <a href="/fundamentals/prompt-engineering" >Prompt Engineering Basics</a> page covers the fundamentals: state the why, link to examples, keep tasks focused.
+				This page builds on those ideas with techniques specific to writing code with AI. The focus here is less about any single prompt and more about
+				what surrounds it: the files you reference, the constraints you set, the workflow you follow. This shift has a name:{" "}
+				<strong>context engineering</strong>.
+			</p>
+
+			<p>
+				Andrej Karpathy{" "}
+				<a href="https://x.com/karpathy/status/1937902205765607626" target="_blank" rel="noopener noreferrer" >put it this way</a>:
+				the LLM is the CPU, the context window is RAM. Your job is to curate what goes in RAM.
+				A great prompt in a polluted context produces worse results than an average prompt in a clean, focused one.
+				If you haven't read the <a href="/development/context-strategies" >Context Strategies</a> page yet, start there. That page covers when to clear and compact the window; this one covers what to put in it and how to phrase it.
+			</p>
+
+			<p>
+				For a deeper dive on context engineering as a concept, see{" "}
+				<a href="https://www.faros.ai/blog/context-engineering-for-developers" target="_blank" rel="noopener noreferrer" >Faros: Context Engineering for Developers</a> and{" "}
+				<a href="https://towardsagenticai.com/context-engineering-vs-prompt-engineering-the-2025-ai-shift/" target="_blank" rel="noopener noreferrer" >Towards Agentic AI: Context Engineering vs Prompt Engineering</a>.
+			</p>
+
+			<h3>Explore, Plan, Document, Code, Commit</h3>
+
+			<p>
+				The workflow that consistently produces the best results follows a few phases. Explore, plan, code, and commit are Anthropic's canonical loop;
+				we slot a document step in right after the plan, so the design and the reasoning behind it are written down before any code exists. That doc
+				becomes the source of truth the AI codes against, and the documentation is already done by the time the feature ships.
+				This lines up with the{" "}
+				<a href="/development/agent-plan-ask" >Agent, Plan & Ask Modes</a>{" "}
+				page, but here we're focused on how to prompt within each phase.
+			</p>
+
+			<div class="space-y-4 my-8">
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-teal-700 mb-1">1. Explore</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						Use Ask or Plan mode. Have the AI read relevant files and summarize what it finds. No code yet.
+					</p>
+					<p class="font-mono text-xs text-stone-500 leading-relaxed mt-2 bg-stone-50 rounded px-3 py-2">
+						"Read src/auth/ and summarize how token refresh works. What would need to change to support OAuth?"
+					</p>
+				</div>
+
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-teal-700 mb-1">2. Plan</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						Ask for a step-by-step plan. Review it. Edit it if needed. This is where you catch wrong assumptions before any code exists.
+					</p>
+					<p class="font-mono text-xs text-stone-500 leading-relaxed mt-2 bg-stone-50 rounded px-3 py-2">
+						"I want to add Google OAuth. Based on what you've read, what files need to change? Write a plan before implementing anything."
+					</p>
+				</div>
+
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-teal-700 mb-1">3. Document</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						Turn the reviewed plan into a short design doc: what you're building and why, including the options you rejected. It becomes the source of truth
+						the AI codes against. Covered in detail below.
+					</p>
+					<p class="font-mono text-xs text-stone-500 leading-relaxed mt-2 bg-stone-50 rounded px-3 py-2">
+						"Write the plan we just agreed on to docs/auth.md as a design doc. Capture what we're building and why we chose token refresh over server-side sessions."
+					</p>
+				</div>
+
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-teal-700 mb-1">4. Code</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						Execute the plan, now captured in the doc. Include verification criteria (covered below) so the AI can check its own work.
+					</p>
+				</div>
+
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-teal-700 mb-1">5. Commit</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						Review the diff, reconcile the doc with anything that changed during implementation, then let the AI write the commit message. See{" "}
+						<a href="/development/utilizing-git" >Utilizing Git</a>{" "}
+						for more on this step.
+					</p>
+				</div>
+			</div>
+
+			<p>
+				Skipping the plan step is the most common cause of wasted work. The AI will happily solve the wrong problem if you let it jump straight to code. Anthropic's own team{" "}
+				<a href="https://code.claude.com/docs/en/best-practices" target="_blank" rel="noopener noreferrer" >recommends this workflow</a>{" "}
+				for anything non-trivial, and{" "}
+				<a href="https://graphite.com/guides/programming-with-ai-workflows-claude-copilot-cursor" target="_blank" rel="noopener noreferrer" >Graphite's workflow guide</a>{" "}
+				covers it across Claude, Copilot, and Cursor.
+			</p>
+
+			<h3>Give It Verification Criteria</h3>
+
+			<p>
+				The <a href="https://code.claude.com/docs/en/best-practices" target="_blank" rel="noopener noreferrer" >official Claude Code docs</a>{" "}
+				call this "the single highest-leverage thing you can do." Without success criteria, the AI has no feedback loop and you become the only error detector.
+			</p>
+
+			<div class="space-y-4 my-8">
+				<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Instead of this</div>
+					<p class="font-mono text-sm text-stone-700 leading-relaxed">
+						"Implement a function that validates email addresses"
+					</p>
+				</div>
+				<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Do this</div>
+					<p class="font-mono text-sm text-stone-700 leading-relaxed">
+						"Write a validateEmail function. Test cases: user@example.com should return true, 'invalid' should return false, user@.com should return false. Run the tests after implementing."
+					</p>
+				</div>
+			</div>
+
+			<div class="space-y-4 my-8">
+				<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Instead of this</div>
+					<p class="font-mono text-sm text-stone-700 leading-relaxed">
+						"The build is failing"
+					</p>
+				</div>
+				<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Do this</div>
+					<p class="font-mono text-sm text-stone-700 leading-relaxed">
+						"The build fails with: [paste the error]. Fix it and verify the build succeeds. Address the root cause, don't suppress the error."
+					</p>
+				</div>
+			</div>
+
+			<p>
+				The key idea is always the same: tell the AI what "done" looks like, and it will work toward that target instead of guessing.{" "}
+				<a href="https://addyo.substack.com/p/the-prompt-engineering-playbook-for" target="_blank" rel="noopener noreferrer" >Addy Osmani's Prompt Engineering Playbook</a>{" "}
+				covers this in more depth with additional examples.
+			</p>
+
+			<h3>Pattern Reference: "Follow This Example"</h3>
+
+			<p>
+				We covered{" "}
+				<a href="/fundamentals/prompt-engineering" >golden masters</a>{" "}
+				in the fundamentals. In code, this technique is even more powerful because conventions are hard to describe but obvious from an example.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<p class="font-mono text-sm text-stone-700 leading-relaxed">
+					"Look at how existing widgets are implemented on the home page. HotDogWidget.php is a good example of the pattern. Follow that pattern to implement a new CalendarWidget with the same structure, naming conventions, and error handling approach."
+				</p>
+			</div>
+
+			<p>
+				This handles naming, file structure, error handling, and API conventions without you spelling them out. Models are trained to continue patterns, so a concrete example removes ambiguity about what "follow our conventions" means.
+				Research from{" "}
+				<a href="https://towardsdatascience.com/5x-agentic-coding-performance-with-few-shot-prompting/" target="_blank" rel="noopener noreferrer" >Towards Data Science</a>{" "}
+				shows this approach can produce a 5x improvement in agentic coding performance compared to zero-shot prompts.
+			</p>
+
+			<p>
+				If you find yourself correcting the AI's style repeatedly, that's a signal to either point it at a better example or add a rule to your
+				CLAUDE.md / <code>.cursor/rules</code>. For patterns you use often, like creating a new API endpoint or adding a new page to your app, consider wrapping the example and instructions into a{" "}
+				<a href="/requirements-writing/skills">skill</a> so the whole team can reuse it consistently. For more on instruction files, see the{" "}
+				<a href="/task-breakdowns/agents-md" >AGENTS.md</a> page and the external guides on{" "}
+				<a href="https://www.humanlayer.dev/blog/writing-a-good-claude-md" target="_blank" rel="noopener noreferrer" >writing a good CLAUDE.md</a> and{" "}
+				<a href="https://cursor.com/docs/context/rules" target="_blank" rel="noopener noreferrer" >Cursor Rules</a>.
+			</p>
+
+			<h3>Spec-Driven Development</h3>
+
+			<p>
+				A practice that has become mainstream as AI coding matured: write a specification before any code is generated.
+				The spec becomes the source of truth the AI works from, and it catches ambiguity before it turns into wrong code.
+			</p>
+
+			<p>
+				If you've been following this training, you've already built the foundation for this.
+				The <a href="/requirements-writing/templates" >Templates</a> and{" "}
+				<a href="/requirements-writing/skills" >Skills</a> pages cover how to produce structured requirements, and the{" "}
+				<a href="/task-breakdowns/including-context" >Including Context</a> page covers how to bridge requirements and code.
+				The developer angle is: start a fresh session with the spec as input and implement from it. The implementation session gets clean context focused entirely on the code.
+			</p>
+
+			<p>
+				A useful variation is the "interview me" pattern: give the AI a brief description and ask it to interview you about edge cases, tradeoffs, and technical details before writing anything. Then save the result as a spec and start a new session to implement.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<p class="font-mono text-sm text-stone-700 leading-relaxed">
+					"I want to build a notification system for our app. Interview me about the technical implementation, UI/UX decisions, edge cases, and tradeoffs. Don't ask obvious questions. Dig into the hard parts I might not have thought about. When we're done, write the spec to SPEC.md."
+				</p>
+			</div>
+
+			<p>
+				This approach is gaining traction across the industry.{" "}
+				<a href="https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/" target="_blank" rel="noopener noreferrer" >GitHub published an open-source spec toolkit</a>,
+				Amazon's <a href="https://kiro.dev/blog/introducing-kiro/" target="_blank" rel="noopener noreferrer" >Kiro IDE</a>{" "}
+				formalizes the flow (requirement to user stories to technical design to tasks), and{" "}
+				<a href="https://www.thoughtworks.com/en-us/insights/blog/agile-engineering-practices/spec-driven-development-unpacking-2025-new-engineering-practices" target="_blank" rel="noopener noreferrer" >Thoughtworks assessed it</a>{" "}
+				as one of 2025's key engineering practices. Martin Fowler's team has a good{" "}
+				<a href="https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html" target="_blank" rel="noopener noreferrer" >overview of the tooling landscape</a>.
+			</p>
+
+			<h3>Document the Design Before You Code</h3>
+
+			<p>
+				Once you and the AI have agreed on a plan, capture it as a design doc before writing any code. The AI has just explored the codebase and reasoned
+				through the approach, so it can draft this for you in one prompt. Doing it now, rather than after the code lands, has two payoffs: the doc becomes
+				the spec the AI implements against, and the documentation is finished before the feature ships instead of being the chore nobody gets back to.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<p class="font-mono text-sm text-stone-700 leading-relaxed">
+					"Before we implement anything, write the plan we agreed on to docs/auth.md as a design doc. Cover what we're adding, the files it touches, and why we chose token refresh over server-side sessions. Keep it concise."
+				</p>
+			</div>
+
+			<p>
+				The catch: AI is reliable at describing <strong>what</strong> the plan does and shaky on <strong>why</strong>. It will happily restate the steps
+				while glossing over the intent, the alternatives you rejected, and the edge cases you decided to handle on purpose. That "why" is the part worth
+				writing down, so prompt for it explicitly and review the draft before you build against it. Treat AI-drafted docs exactly like AI-drafted code:
+				draft automatically, review for intent, then use it.
+			</p>
+
+			<Callout variant="tip" title="Prompt for the why, not just the what">
+				<p>
+					Instead of "document this design," try "document this design, focusing on why we're doing it this way, what invariants callers must maintain, and
+					any non-obvious edge cases." The first gives you a paraphrase of the plan; the second captures the context that isn't obvious from the code.
+				</p>
+			</Callout>
+
+			<p>
+				When the code is done, do a quick pass to reconcile the doc with anything that changed during implementation, and keep it in the same pull request
+				so it can't silently drift out of sync. This page only covers the prompting angle. For what to write down, where to put it, and reusable templates,
+				see the{" "}
+				<a href="/documentation/why-it-matters" >Documentation</a> chapter, and the{" "}
+				<a href="/task-breakdowns/agents-md" >AGENTS.md</a> page for keeping your instruction files current.
+			</p>
+
+			<h3>Prompting for Specific Task Types</h3>
+
+			<p>
+				The general principles above apply everywhere, but certain task types benefit from specific prompting patterns.
+			</p>
+
+			<h4>Refactoring</h4>
+
+			<p>
+				State a specific objective rather than a vague "clean this up." Tell the AI what dimension to improve: "reduce duplication," "improve readability," "extract this into a reusable utility." Do one pass at a time. A readability pass followed by a performance pass produces better results than asking for both at once.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<p class="font-mono text-sm text-stone-700 leading-relaxed">
+					"Refactor src/utils/dateHelpers.ts to reduce duplication. The formatForDisplay and formatForApi functions share most of their logic. Extract the shared parts. Don't change the public API or any calling code."
+				</p>
+			</div>
+
+			<h4>Adding Features to Existing Code</h4>
+
+			<p>
+				Point to the most similar existing feature as a pattern (see above). Reference specific files by path. State what must remain unchanged. The more you narrow the scope, the less the AI will "improve" unrelated code.
+			</p>
+
+			<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 my-8">
+				<p class="font-mono text-sm text-stone-700 leading-relaxed">
+					"Add a 'last login' timestamp to the user profile page. Follow the same pattern used for the 'member since' date in src/components/UserProfile.tsx. Only modify UserProfile.tsx and the user API response type in src/types/api.ts."
+				</p>
+			</div>
+
+			<h4>Migrations</h4>
+
+			<p>
+				Provide an "already migrated" file as the pattern. Test on 2-3 files first before scaling to the full codebase. For large-scale migrations, you can fan out by generating a file list and processing each file in a separate session. The{" "}
+				<a href="https://code.claude.com/docs/en/best-practices" target="_blank" rel="noopener noreferrer" >Claude Code docs</a>{" "}
+				cover the <code>claude -p</code> loop pattern for this, and{" "}
+				<a href="/development/additional-features" >sub-agents</a>{" "}
+				let you run several of these transformations in parallel, each with its own clean context, so a fifty-file migration doesn't all pile into one window.{" "}
+				<a href="https://medium.com/qonto-way/ai-driven-refactoring-in-large-scale-migrations-strategies-and-techniques-fcdb9b5116c6" target="_blank" rel="noopener noreferrer" >Qonto's writeup on AI-driven large-scale migrations</a> is a good real-world case study.
+			</p>
+
+			<Callout variant="tip" title="Practical tip">
+				<p>
+					For debugging prompts, see the dedicated <a href="/development/debugging">Debugging with AI</a> page.
+					For choosing the right interaction mode (Agent vs Plan vs Ask) for each task type, see{" "}
+					<a href="/development/agent-plan-ask">Agent, Plan & Ask Modes</a>.
+				</p>
+			</Callout>
+
+			<h3>Set Constraints</h3>
+
+			<p>
+				Without constraints, AI tools tend to over-engineer, refactor unrelated code, or "improve" things you didn't ask about. Explicitly state what the AI should <strong>not</strong> do.
+			</p>
+
+			<ul class="space-y-2 text-stone-600">
+				<li>"Only modify the function I've specified; do not refactor surrounding code"</li>
+				<li>"Do not introduce any new dependencies"</li>
+				<li>"Only change what is necessary to fix this bug"</li>
+				<li>"Implement this without using library X"</li>
+			</ul>
+
+			<p>
+				This is especially important for bug fixes and small changes where the AI's instinct to "help" can create unnecessary diff noise and regressions.
+				The <a href="https://newsletter.getdx.com/p/advanced-prompting-guide-for-ai-assisted" target="_blank" rel="noopener noreferrer" >DX Newsletter's advanced prompting guide</a>{" "}
+				notes that narrowing the scope "increases output quality dramatically."
+			</p>
+
+			<h3>Common Anti-Patterns</h3>
+
+			<div class="space-y-3 my-8">
+				<div class="flex gap-3 items-start">
+					<div class="w-2 h-2 rounded-full bg-red-400 shrink-0 mt-2"></div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						<strong class="text-stone-800">Vague requests</strong> — "Make this better" gives the AI nothing to aim at. Specify the dimension: faster? More readable? Less duplication?
+					</p>
+				</div>
+				<div class="flex gap-3 items-start">
+					<div class="w-2 h-2 rounded-full bg-red-400 shrink-0 mt-2"></div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						<strong class="text-stone-800">Kitchen sink sessions</strong> — Unrelated tasks in one conversation. Each task should be{" "}
+						<a href="/development/context-strategies">its own conversation</a>.
+					</p>
+				</div>
+				<div class="flex gap-3 items-start">
+					<div class="w-2 h-2 rounded-full bg-red-400 shrink-0 mt-2"></div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						<strong class="text-stone-800">Over-correcting in place</strong> — Corrected the AI twice on the same thing? The context is now polluted with failed attempts. Clear and start over with a better prompt.
+					</p>
+				</div>
+				<div class="flex gap-3 items-start">
+					<div class="w-2 h-2 rounded-full bg-red-400 shrink-0 mt-2"></div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						<strong class="text-stone-800">Trusting without verifying</strong> — Plausible-looking code with hidden flaws. Always verify: tests, linter, manual review. See{" "}
+						<a href="/development/code-review">Code Review</a> and{" "}
+						<a href="/fundamentals/hallucination">Hallucination & Verification</a>.
+					</p>
+				</div>
+				<div class="flex gap-3 items-start">
+					<div class="w-2 h-2 rounded-full bg-red-400 shrink-0 mt-2"></div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						<strong class="text-stone-800">No success criteria</strong> — "Make it faster" without a metric. "Fix the layout" without saying what's wrong. Give it a target.
+					</p>
+				</div>
+				<div class="flex gap-3 items-start">
+					<div class="w-2 h-2 rounded-full bg-red-400 shrink-0 mt-2"></div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						<strong class="text-stone-800">Unbounded exploration</strong> — "Investigate everything about our auth system" fills the context with noise. Scope it: what specifically do you need to know?
+					</p>
+				</div>
+			</div>
+
+			<h3>Further Reading</h3>
+
+			<p>
+				This is a fast-moving space. A few resources worth bookmarking:
+			</p>
+
+			<ul class="space-y-2 text-sm text-stone-600">
+				<li>
+					<a href="https://code.claude.com/docs/en/best-practices" target="_blank" rel="noopener noreferrer" >Claude Code: Best Practices</a> — Anthropic's official guide, regularly updated
+				</li>
+				<li>
+					<a href="https://addyo.substack.com/p/the-prompt-engineering-playbook-for" target="_blank" rel="noopener noreferrer" >The Prompt Engineering Playbook for Programmers</a> — Addy Osmani's comprehensive guide
+				</li>
+				<li>
+					<a href="https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/ace-fca.md" target="_blank" rel="noopener noreferrer" >Advanced Context Engineering for Coding Agents</a> — HumanLayer's deep dive
+				</li>
+				<li>
+					<a href="https://graphite.com/guides/better-prompts-ai-code" target="_blank" rel="noopener noreferrer" >How to Write Better Prompts for AI Code Generation</a> — Graphite's practical guide
+				</li>
+				<li>
+					<a href="https://www.augmentcode.com/guides/master-prompt-engineering-techniques-for-ai-coding" target="_blank" rel="noopener noreferrer" >Master Prompt Engineering Techniques for AI Coding</a> — Augment Code's guide
+				</li>
+				<li>
+					<a href="https://newsletter.getdx.com/p/advanced-prompting-guide-for-ai-assisted" target="_blank" rel="noopener noreferrer" >Advanced Prompting Guide for AI-Assisted Engineering</a> — DX Newsletter
+				</li>
+				<li>
+					<a href="https://newsletter.pragmaticengineer.com/p/ai-tooling-2026" target="_blank" rel="noopener noreferrer" >AI Tooling for Software Engineers in 2026</a> — The Pragmatic Engineer
+				</li>
+				<li>
+					<a href="https://www.qodo.ai/blog/code-documentation-best-practices-2026/" target="_blank" rel="noopener noreferrer" >Code Documentation Best Practices for Teams (2026)</a> — Qodo, on keeping docs in the same PR as code
+				</li>
+				<li>
+					<a href="https://blog.codercops.com/blog/ai-technical-documentation-2026" target="_blank" rel="noopener noreferrer" >AI-Assisted Technical Documentation: Keeping Docs Accurate When Code Changes Fast</a> — on drafting with AI and reviewing for intent
+				</li>
+			</ul>
+		</div>
+	</PageShell>
+</MainLayout>

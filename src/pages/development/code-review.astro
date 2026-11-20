@@ -1,0 +1,114 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Code Review - AI Training Guide">
+	<PageShell chapterId="development" subChapterId="code-review">
+		<div class="prose space-y-6">
+			<p>
+				When AI writes most of the code, code review becomes the primary place
+				where you exercise engineering judgment. The volume of code you need to
+				review goes up, and your familiarity with each line goes down. That
+				combination means review needs to be more deliberate than ever.
+			</p>
+
+			<h3>Review in Multiple Places</h3>
+
+			<p>
+				Do not rely on a single view of the changes. Use at least two:
+			</p>
+
+			<ul class="space-y-3 my-4">
+				<li>
+					<span class="font-semibold">Your Git client.</span>{" "}
+					Review the diff locally, file by file. This gives you the best context
+					for understanding how changes fit into the surrounding code. Most Git
+					clients let you stage or discard individual hunks, which is useful when
+					the AI included changes you did not ask for.
+				</li>
+				<li>
+					<span class="font-semibold">The PR page on GitHub (or your platform).</span>{" "}
+					The PR view shows you CI results, automated checks, and the full scope
+					of the change in one place. It also gives you a different visual layout
+					than your local client, which helps you catch things you might skim past
+					in a familiar environment.
+				</li>
+			</ul>
+
+			<h3>What to Look For</h3>
+
+			<p>
+				Your review checklist with AI-generated code is the same as any code
+				review, but certain areas deserve extra attention:
+			</p>
+
+			<ul class="space-y-3 my-4">
+				<li>
+					<span class="font-semibold">Does it actually solve the problem?</span>{" "}
+					AI can produce working code that does the wrong thing. Verify the behavior,
+					not just the syntax.
+				</li>
+				<li>
+					<span class="font-semibold">Are there security issues?</span>{" "}
+					AI models do not always follow security best practices. Check for injection
+					vulnerabilities, exposed secrets, missing auth checks, and unsafe defaults.
+				</li>
+				<li>
+					<span class="font-semibold">Is it consistent with the codebase?</span>{" "}
+					Watch for naming inconsistencies, architectural deviations, and patterns
+					that do not match the surrounding code.
+				</li>
+				<li>
+					<span class="font-semibold">Did it over-engineer?</span>{" "}
+					AI often adds unnecessary abstractions, extra configuration options, or
+					defensive code for scenarios that cannot happen. Simpler is better.
+				</li>
+			</ul>
+
+			<h3>Let AI Review Before You Send</h3>
+
+			<p>
+				Before you commit or open a PR, have an AI do a first review pass. Most tools now ship a command or skill for this. In Claude Code,{" "}
+				<code>/code-review</code> checks your working diff for bugs and cleanups and{" "}
+				<code>/security-review</code> scans the pending changes for vulnerabilities, both from the terminal before you push. Cursor and other tools have
+				similar "review the changes" features, and you can wrap your team's standards into a custom review skill so every pass checks the same things.
+				See Claude Code's{" "}
+				<a href="https://code.claude.com/docs/en/code-review" target="_blank" rel="noopener noreferrer">code review docs</a>{" "}
+				for what the local command covers.
+			</p>
+
+			<Callout variant="warning" title="This does not replace human review">
+				<p>
+					An AI reviewing AI-generated code shares the same blind spots that produced the code. It is good at catching obvious bugs, security smells,
+					and inconsistencies, so it clears the easy problems before a person looks. It is not a substitute for your judgment. Treat it as a first pass
+					that makes your review more productive, not as the review itself.
+				</p>
+			</Callout>
+
+			<h3>AI Reviewers on the Pull Request</h3>
+
+			<p>
+				Depending on your project, the PR itself may get an automated AI review. Tools like{" "}
+				<a href="https://docs.github.com/en/copilot/concepts/agents/code-review" target="_blank" rel="noopener noreferrer">GitHub Copilot code review</a>,{" "}
+				<a href="https://code.claude.com/docs/en/code-review" target="_blank" rel="noopener noreferrer">Claude Code's Code Review</a>,{" "}
+				<a href="https://www.coderabbit.ai/" target="_blank" rel="noopener noreferrer">CodeRabbit</a>, and Cursor's Bugbot post inline comments on the
+				diff, tagged by severity, when a PR opens or on every push. Most of them leave a plain "Comment" review rather than an approval, so they add a
+				second set of eyes without approving or blocking the merge on their own.
+			</p>
+
+			<p>
+				Handle these the way you would a junior reviewer's comments: useful signal, not a verdict. Triage the findings, fix what is real, dismiss the
+				noise, and still get a human approval before merging. If your team uses one, tune it with a config file (for example a{" "}
+				<code>REVIEW.md</code> or <code>CLAUDE.md</code>) so it flags what matters for your codebase and stays quiet on the rest.
+			</p>
+
+			<Callout variant="tip" title="Practical tip">
+				<p>
+					If a diff is large, review it in smaller logical chunks. Think about maybe breaking up tasks into multiple PRs as you develop them.
+				</p>
+			</Callout>
+		</div>
+	</PageShell>
+</MainLayout>

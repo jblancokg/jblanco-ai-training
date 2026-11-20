@@ -1,0 +1,68 @@
+---
+import Callout from "../../components/Callout.astro";
+import { JourneyMap } from "../../components/JourneyMap";
+import PageShell from "../../components/PageShell.astro";
+import { getNavigableItems, getUrlForNavItem } from "../../data/chapters";
+import MainLayout from "../../layouts/MainLayout.astro";
+
+const navItems = getNavigableItems();
+const currentIdx = navItems.findIndex((item) => item.chapterId === "intro" && item.subChapterId === "welcome");
+const next = currentIdx < navItems.length - 1 ? navItems[currentIdx + 1] : null;
+const nextUrl = next ? getUrlForNavItem(next) : "/intro/roles-and-tools";
+const nextLabel = next?.label ?? "Roles & Tools";
+---
+
+<MainLayout title="Welcome - AI Training Guide">
+  <PageShell chapterId="intro" subChapterId="welcome">
+    <!-- Hero -->
+    <div class="mb-10">
+      <p class="text-2xl sm:text-3xl font-bold text-stone-800 leading-snug tracking-tight mb-4" style="font-family: 'Source Serif 4', Georgia, serif;">
+        Practical AI skills for your everyday workflow.
+      </p>
+      <ul class="space-y-2 text-base text-stone-600 leading-relaxed list-none pl-0 m-0">
+        <li class="flex items-start gap-2.5">
+          <span class="text-orange-400 mt-0.5 shrink-0">&#9670;</span>
+          <span>Concrete techniques for using AI assistants across the software development lifecycle</span>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <span class="text-orange-400 mt-0.5 shrink-0">&#9670;</span>
+          <span>Focused on <strong class="text-stone-800">Claude Cowork</strong> and <strong class="text-stone-800">Cursor</strong>, with patterns that transfer to other tools</span>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <span class="text-orange-400 mt-0.5 shrink-0">&#9670;</span>
+          <span>Real examples, interactive demos, and pitfalls that waste the most time</span>
+        </li>
+      </ul>
+    </div>
+
+    <hr class="border-stone-200 my-8" />
+
+    <!-- Body copy -->
+    <div class="prose space-y-6">
+      <p>
+        Working with AI is a skill you develop over time. The way you phrase a request, the context you provide, the assumptions you challenge — all of it shapes the quality of what you get back and the velocity of your work.
+      </p>
+
+      <p>
+        There's no single "correct" way to prompt. Your style will evolve as you learn what works for you, your team, and your workflows. What we can do here is give you a strong foundation, show you patterns that consistently work well, and point out the pitfalls that waste the most time.
+      </p>
+
+    </div>
+
+    <!-- Journey map -->
+    <div>
+      <JourneyMap client:visible />
+    </div>
+
+    <!-- CTA -->
+    <div class="mt-10 mb-4">
+      <a
+        href={nextUrl}
+        class="inline-flex items-center gap-2 bg-stone-800 text-white hover:bg-stone-700 px-6 py-3 rounded-lg text-base font-medium transition-all duration-200 hover:-translate-y-0.5 no-underline"
+      >
+        Start with {nextLabel}
+        <span class="text-lg">&rarr;</span>
+      </a>
+    </div>
+  </PageShell>
+</MainLayout>

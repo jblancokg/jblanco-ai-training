@@ -1,0 +1,114 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Current State of AI - AI Training Guide">
+  <PageShell chapterId="intro" subChapterId="current-state">
+    <div class="prose space-y-6">
+      <p>
+        Before diving in, it's worth being honest about where AI tools actually are right now. They're impressive, but they're not magic. Setting the right expectations will save you a lot of frustration.
+      </p>
+
+      <h3>
+        Capability Levels
+      </h3>
+
+      <p>
+        Here's a useful mental model for calibrating your expectations:
+      </p>
+
+      <div class="space-y-4 my-8">
+        <Callout variant="info" title="For Strategy Work">
+          <p>
+            Think of AI as an <strong>associate-level employee</strong>: eager and fast, but with an overly enthusiastic attitude and a tendency to make things up when it doesn't know the answer. It will give you something that looks polished and confident, even when the underlying reasoning is shaky. Always verify. Never trust a statistic, claim, or recommendation without checking the source.
+          </p>
+        </Callout>
+        <Callout variant="success" title="For Development Work">
+          <p>
+            Think of AI as a <strong>new grad developer</strong>: knows the fundamentals, writes working code quickly, and can take on real tasks, but tends to be overly verbose, still misreads requirements at times, and defaults to generic UI design unless given a clear visual reference or design system. It will produce code that compiles and runs, but you need to review it like you'd review a junior developer's pull request.
+          </p>
+        </Callout>
+      </div>
+
+      <p>
+        These aren't insults or criticisms. AI tools at this level are genuinely useful when you know their limits. The problems start when people treat them as senior engineers or subject-matter experts. These tools have no context or experience at your company or the client's company. They are always fresh employees and will make mistakes just like real employees.
+      </p>
+
+      <h3>
+        Speed
+      </h3>
+
+      <p>
+        The other side of the trade is speed. These models read and write far faster than any person, so a first draft, a batch of test cases, or a sweep across a large codebase comes back in seconds. The work still needs review, but you're reviewing instead of starting from a blank page.
+      </p>
+
+      <p>
+        On the strategy side this is where the biggest time savings show up, especially with deep research mode. A task that used to mean an afternoon of reading and note-taking (gathering sources, comparing options, summarizing a landscape) can run in the background and come back as a structured draft you refine, rather than build from scratch.
+      </p>
+
+      <h3>
+        Frontier Models (October 2026)
+      </h3>
+
+      <p>
+        The AI landscape moves fast. Here are the major models worth knowing about right now:
+      </p>
+
+      <div class="border border-stone-200 rounded-lg overflow-hidden my-8">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-stone-50 border-b border-stone-200">
+              <th class="text-left px-4 py-2.5 text-stone-500 font-semibold text-xs">Model Family</th>
+              <th class="text-left px-4 py-2.5 text-stone-500 font-semibold text-xs">Provider</th>
+              <th class="text-left px-4 py-2.5 text-stone-500 font-semibold text-xs">Strengths</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-stone-100">
+            <tr class="hover:bg-orange-50/30 transition-colors">
+              <td class="px-4 py-2.5 font-semibold text-stone-700">Opus 5.5 / Sonnet 5.5</td>
+              <td class="px-4 py-2.5 text-stone-500">Anthropic</td>
+              <td class="px-4 py-2.5 text-stone-500">Everyday and long-running agentic coding. Sonnet 5.5 is the fast, lower-cost default for well-scoped tasks and docs; Opus 5.5 leads on complex multi-file coding and knowledge work with 1M context and lower per-task cost than Opus 5</td>
+            </tr>
+            <tr class="hover:bg-orange-50/30 transition-colors">
+              <td class="px-4 py-2.5 font-semibold text-stone-700">Fable 5.1</td>
+              <td class="px-4 py-2.5 text-stone-500">Anthropic</td>
+              <td class="px-4 py-2.5 text-stone-500">Built for demanding, multi-hour reasoning and research when Opus 5.5 at high effort still falls short, but at 2.5x the token cost of Opus 5.5 it is still too expensive for routine day-to-day tasks</td>
+            </tr>
+            <tr class="hover:bg-orange-50/30 transition-colors">
+              <td class="px-4 py-2.5 font-semibold text-stone-700">GPT-6 (Astra / 6.1 Sol / Luna) &amp; GPT-5.6</td>
+              <td class="px-4 py-2.5 text-stone-500">OpenAI</td>
+              <td class="px-4 py-2.5 text-stone-500">Strong reasoning, computer use, and terminal-based coding. GPT-6 Sol and Astra lead in ChatGPT and Codex, while GPT-5.6 (Sol / Terra / Luna) remains widely used in IDEs like Cursor</td>
+            </tr>
+            <tr class="hover:bg-orange-50/30 transition-colors">
+              <td class="px-4 py-2.5 font-semibold text-stone-700">Gemini 4 Argon / 3.8 Flash</td>
+              <td class="px-4 py-2.5 text-stone-500">Google</td>
+              <td class="px-4 py-2.5 text-stone-500">1M context and strong price-to-performance. Gemini 4 Argon is a major step up for long-horizon coding and research, while 3.8 Flash handles fast, high-volume tasks and codebase Q&amp;A</td>
+            </tr>
+            <tr class="hover:bg-orange-50/30 transition-colors">
+              <td class="px-4 py-2.5 font-semibold text-stone-700">Grok 4.7</td>
+              <td class="px-4 py-2.5 text-stone-500">xAI</td>
+              <td class="px-4 py-2.5 text-stone-500">500k context, jointly trained with Cursor for agentic coding and self-verification, with aggressive pricing ($2/$6 per MTok) and real-time X integration</td>
+            </tr>
+            <tr class="hover:bg-orange-50/30 transition-colors">
+              <td class="px-4 py-2.5 font-semibold text-stone-700">Composer 2.5</td>
+              <td class="px-4 py-2.5 text-stone-500">Cursor</td>
+              <td class="px-4 py-2.5 text-stone-500">Purpose-built for agentic coding inside Cursor, RL-trained MoE architecture, much faster and cheaper than general-purpose frontier models</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        The gap between these models is narrowing. Long-horizon agentic coding and tool use have become the key differentiators, with older benchmarks like SWE-Bench Verified saturating and harder suites (Terminal-Bench 4.0, FrontierCode, CursorBench) showing the real separation. Open-weight models like GLM-5.2 and GLM-5.3 are closing in on proprietary performance with 1M-token context windows, and pricing continues to drop. Cursor's Composer is a notable example: a coding-specific model likely fine-tuned on an open-weight GLM base, then heavily post-trained with reinforcement learning to match mid-frontier intelligence at much higher speed. Try several on your actual work rather than picking one and sticking with it.
+      </p>
+
+      <Callout variant="tip" title="This will be outdated soon">
+        <p>
+          The specific models and their capabilities are a moving target. The principles in this guide, however, are not: how to communicate clearly, how to verify output, and how to structure your workflow. These will outlast any particular model version. Focus on the patterns, not the product names. For up-to-date model rankings, check <a href="https://www.vellum.ai/llm-leaderboard" target="_blank" rel="noopener noreferrer" class="text-orange-600 underline hover:text-orange-700">Vellum's LLM Leaderboard</a> and <a href="https://artificialanalysis.ai/" target="_blank" rel="noopener noreferrer" class="text-orange-600 underline hover:text-orange-700">Artificial Analysis</a>. For coding specifically, <a href="https://deepswe.datacurve.ai/blog/deepswe" target="_blank" rel="noopener noreferrer" class="text-orange-600 underline hover:text-orange-700">DeepSWE</a> scores agents on long-horizon, real-world engineering tasks, and Cursor's <a href="https://cursor.com/blog/cursorbench" target="_blank" rel="noopener noreferrer" class="text-orange-600 underline hover:text-orange-700">CursorBench</a> ranks models on real IDE sessions (keep in mind it's vendor-run and not independently reproducible).
+        </p>
+      </Callout>
+    </div>
+  </PageShell>
+</MainLayout>

@@ -1,0 +1,69 @@
+---
+import Answer from "../../components/challenge/Answer.astro";
+import ChallengeIntro from "../../components/challenge/ChallengeIntro.astro";
+import Checklist from "../../components/challenge/Checklist.astro";
+import Message from "../../components/challenge/Message.astro";
+import Task from "../../components/challenge/Task.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Feature from a Sketch - AI Training Guide">
+	<PageShell chapterId="exploring-ai-capabilities" subChapterId="feature-from-sketch">
+		<ChallengeIntro skill="You can sketch a feature on paper, photograph it, and have the agent build it, filling in what the sketch leaves out.">
+			Marketing wants a photo gallery on the about page. The photos are already in the codebase. You design the layout.
+		</ChallengeIntro>
+
+		<Message kind="email" subject="About page gallery" from="Marketing" to="Web Team" date="Thu, 1 Oct 2026 11:20">
+			<p>
+				The about page needs a gallery: "From the archive". We've got photos for it already, they're in the website's assets.
+				Sketch how you think it should look and get it built.
+			</p>
+		</Message>
+
+		<Task>
+			Sketch the gallery on paper or in a paint app, photograph it, then write a prompt to have your agent build it from the
+			photo.
+		</Task>
+
+		<Checklist
+			title="Before you prompt"
+			items={[
+				"Sketch where the photos go, which are big and which are small, and where the captions sit.",
+				"Add anything else you want, such as a lightbox or a carousel.",
+				"Take a photo of the sketch.",
+			]}
+		/>
+
+		<Checklist
+			items={[
+				"Find the gallery photos in the website's assets.",
+				"Build a gallery on /about that matches your sketch.",
+				"Credit each photo the way its license requires.",
+				"Make it work on a phone as well as desktop, even if your sketch only shows one.",
+				"Tell you what it decided for anything the sketch didn't show, or ask you first.",
+			]}
+		/>
+
+		<Answer
+			prompt={`Based on this sketch <image>, add a "From the archive" gallery to the about page using the photos in the website's assets folder.
+
+Check the photos' licenses and credit them as required. Make it work on phones and desktop. Where the sketch doesn't say, such as hover states, captions or what happens on click, ask me or pick something sensible and tell me what you chose. Check it in agent-browser at desktop and phone widths.`}
+		>
+			<p>
+				The eight photos are in <code>apps/website/src/lib/assets/gallery</code>, with a <code>CREDITS.md</code> listing the
+				photographer and license for each. Most are CC BY or CC BY-SA, which require the photographer to be credited wherever
+				the photo is shown. A good agent finds and uses the credits file without being told. If yours didn't, ask whether the
+				photos can be used as they are.
+			</p>
+			<p>
+				A sketch leaves out hover states, captions, the phone layout and what happens on click. Look at whether the agent asked
+				about those or chose and told you. That's the conversation worth having.
+			</p>
+			<p>
+				The captions are the agent's to write. In Kaiju Mutual's world kaiju are real and Godzilla is fiction, so the photos read
+				best as tributes and souvenirs, in the site's straight-faced tone: "The Shinjuku Godzilla. Not one of ours."
+			</p>
+		</Answer>
+	</PageShell>
+</MainLayout>

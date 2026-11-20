@@ -1,0 +1,267 @@
+---
+import Callout from "../../components/Callout.astro";
+import { GoldenMasterComparison } from "../../components/GoldenMasterComparison";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Templates - AI Training Guide">
+	<PageShell chapterId="requirements-writing" subChapterId="templates">
+		<div class="prose space-y-6">
+			<p>
+				Templates are a simple way to get consistent requirements out of AI. Instead of describing what you want from scratch every time, you give the AI a structure to follow, and it follows it well.
+			</p>
+
+			<Callout variant="info" title="This builds on documentation-first">
+				<p>
+					If your team has adopted{" "}
+					<a href="/requirements-gathering/documentation-first-development">documentation-first development</a>, this is where a lot of the day-to-day work happens. Documentation-first makes your docs the source of truth; templates are what keep every one of those docs in the same shape, so the AI and your teammates always know where things go. Even if you haven't gone all-in on documentation-first, templates still pay off on their own.
+				</p>
+			</Callout>
+
+			<h3>
+				Why Templates Work So Well With AI
+			</h3>
+
+			<p>
+				AI models are good pattern followers. When you hand one a template and say "fill this out based on our conversation," it sticks to the structure closely. You get consistent, complete documents instead of freeform text that varies wildly between sessions.
+			</p>
+
+			<p>
+				A template also acts as a checklist. It forces you and the AI to cover the sections that are easy to forget in an unstructured conversation: edge cases, dependencies, acceptance criteria, the alternatives you ruled out.
+			</p>
+
+			<h3>
+				Match the Template to the Doc Type
+			</h3>
+
+			<p>
+				You don't write one kind of document. A decision record, a feature spec, and a how-to guide each answer a different question, so each wants its own template. The documentation-first chapter lays out a common set of folders, each holding one type of doc:
+			</p>
+
+			<ul class="list-disc pl-5 space-y-2">
+				<li><strong class="text-stone-800">decisions</strong> (ADRs): why we decided something, kept as a historical log.</li>
+				<li><strong class="text-stone-800">features</strong>: what we are building. The most common requirements doc.</li>
+				<li><strong class="text-stone-800">tech</strong>: current technical reasoning and trade-offs.</li>
+				<li><strong class="text-stone-800">guides</strong>: how to do something in this project.</li>
+				<li><strong class="text-stone-800">external</strong>: specs from vendors or other teams you consume.</li>
+				<li><strong class="text-stone-800">workflows</strong>: how a process flows, its states and transitions.</li>
+			</ul>
+
+			<p>
+				Give each type its own template and the AI fills the right one for the task instead of inventing a structure every time.
+			</p>
+
+			<h3>
+				The OKF Shape
+			</h3>
+
+			<p>
+				The{" "}
+				<a href="https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md" target="_blank" rel="noopener noreferrer">Open Knowledge Format (OKF)</a>{" "}
+				gives these docs a consistent skeleton: a short block of YAML frontmatter (only <code>type</code> is required) followed by a markdown body. In practice each folder keeps a <code>_template.md</code> that you copy to start a new doc. That template file is the thing you point the AI at, so a new doc starts in the right shape before a word of content is written.
+			</p>
+
+			<h3>
+				A Worked Example: An ADR Template
+			</h3>
+
+			<p>
+				Architecture Decision Records are a good place to start, because they are small and high-value. They capture one decision, why it was made, and what it costs. Here is a decision template:
+			</p>
+
+			<div class="text-sm text-stone-600 leading-relaxed font-mono bg-stone-50 border border-stone-200 rounded p-3 whitespace-pre-wrap my-6"><code>{`---
+title: <decision in a short noun phrase>
+type: decision
+description: <one-sentence summary of the rule that resulted>
+status: proposed   # proposed | accepted | superseded | deprecated
+timestamp: 2026-06-01
+owner: your-name
+tags: []
+supersedes:        # /decisions/NNNN-....md, or omit
+superseded-by:     # /decisions/NNNN-....md, or omit
+deciders: [your-name]
+---
+
+# <Title>
+
+## Context
+
+What forces are at play? What problem or constraint prompted this decision?
+
+## Decision
+
+What we decided, stated plainly.
+
+## Consequences
+
+What becomes easier, harder, or newly required as a result. Trade-offs accepted.
+
+## Alternatives considered
+
+- **<Option>**: why not.`}</code></div>
+
+			<p>
+				And here is a real one filled in from that template:
+			</p>
+
+			<div class="text-sm text-stone-600 leading-relaxed font-mono bg-stone-50 border border-stone-200 rounded p-3 whitespace-pre-wrap my-6"><code>{`---
+title: Stateless, cookie-based BFF sessions
+type: decision
+description: BFF sessions are stateless, signed cookies (iron-session), no server-side session store.
+status: accepted
+timestamp: 2026-05-28
+owner: mvalstar
+tags: [auth, bff, sessions, cookies]
+deciders: [mvalstar]
+---
+
+# Stateless, cookie-based BFF sessions
+
+## Context
+
+Each Next.js app acts as a BFF in front of the shared Spring Boot API. We need
+session handling on the BFF, but want to avoid operating a shared session store
+(Redis) for an early-phase, two-frontend system.
+
+## Decision
+
+Sessions are **stateless**: the BFF stores signed/encrypted session state in a
+cookie rather than in a server-side store. We lean on \`iron-session\` for the
+encrypted cookie. The session cookie is \`SameSite=Strict\`; the auth-callback
+handoff uses a short-lived \`SameSite=Lax\` cookie that is immediately swapped for
+the Strict session cookie.
+
+## Consequences
+
+- No Redis / shared store to run, scale, or secure.
+- Horizontal scaling is trivial: any BFF instance can serve any request.
+- Cookie size budget must be respected; large session payloads are out.
+- CSRF strategy for cookie-based sessions remains an open question.
+
+## Alternatives considered
+
+- **Server-side sessions (Redis)**: more infra to run; unnecessary at this scale.
+- **better-auth**: pulls in more than a pure session-token use case needs.`}</code></div>
+
+			<p>
+				The filled version does double duty. It is a finished decision record, and it is an example of the quality bar for the next one. When you hand the AI both the template and a strong filled-in example, it picks up more than the headings. It learns how long a "Consequences" section should be, how blunt to be about trade-offs, and what a real "Alternatives considered" looks like.
+			</p>
+
+			<h3>
+				Capturing External and Vendor Docs
+			</h3>
+
+			<p>
+				The <strong>external</strong> type is for specs and docs you consume from a vendor or another team, systems you don't own. Keep one subfolder per source, drop the raw spec (an OpenAPI file, a PDF) in alongside a short concept doc, and record where it came from in the frontmatter so nobody has to guess which version you were working from.
+			</p>
+
+			<p>
+				It is also the right home for the curiosities. Every third-party integration has quirks the official docs don't mention: an endpoint that returns a 200 with an error in the body, a field that is documented but always null, a rate limit you only discover under load. Those findings are easy to lose in a Slack thread and expensive to rediscover. Writing them down where the AI can read them means the next person, or the next AI session, doesn't relearn them the hard way.
+			</p>
+
+			<div class="text-sm text-stone-600 leading-relaxed font-mono bg-stone-50 border border-stone-200 rounded p-3 whitespace-pre-wrap my-6"><code>{`---
+title: DocuSign integration
+type: external
+description: E-signature APIs we consume from the backend, per the DocuSign OpenAPI spec.
+status: proposed
+timestamp: 2026-05-28
+owner: your-name
+tags: [docusign, e-signature, external]
+vendor: DocuSign
+spec-format: openapi
+resource: https://developers.docusign.com/
+retrieved: 2026-05-28
+---
+
+# DocuSign
+
+## What this is
+
+E-signature APIs we consume from the backend. Drop the vendor's OpenAPI
+spec in this folder once you have it.
+
+## Integration notes / curiosities
+
+- Called only from a backend access class; no business logic in that layer.
+- Record the exact spec version once it is pinned.
+- Note anything surprising here as you find it: an endpoint that returns
+  200 with an error body, a field that is documented but always null, a
+  rate limit the docs don't mention.`}</code></div>
+
+			<p>
+				The extra frontmatter fields (<code>vendor</code>, <code>spec-format</code>, <code>resource</code>, <code>retrieved</code>) are provenance: what the source is, what format its spec is in, where to find it, and when you last pulled it. When a vendor changes their API, that is what tells you how stale your notes might be.
+			</p>
+
+			<p>
+				It is also worth capturing how you work with that team: where you file issues or tickets, who the contacts are, which Slack channel or support address to use, and any escalation path or SLA. When something breaks at 4pm, the answer to "who do we tell and how" should be in the doc, not in one person's memory.
+			</p>
+
+			<h3>
+				Golden Masters: Show, Don't Just Tell
+			</h3>
+
+			<p>
+				That second document, the strong filled-in example, is what we call a <strong>golden master</strong>. A template gives the AI structure; a golden master gives it a quality bar. It is a real, completed example of the kind of document you want: your team's best requirements doc, your most thorough spec, the one everyone points to and says "do it like that one."
+			</p>
+
+			<p>
+				When you pair a template with a golden master, the AI picks up more than the section headings. It learns the tone, the level of detail, how technical to get, and what "good" looks like for your team. Without an example, the AI fills in sections generically. With one, it mirrors the depth and style you actually want.
+			</p>
+
+			<div class="space-y-4 my-8">
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-stone-800 mb-1">Template alone</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						"Fill out this requirements template for a user notification feature." The AI produces something structurally correct but generic. Acceptance criteria are vague, edge cases are surface-level.
+					</p>
+				</div>
+
+				<div class="border border-stone-200 rounded-lg px-5 py-4">
+					<div class="text-sm font-semibold text-stone-800 mb-1">Template + golden master</div>
+					<p class="text-sm text-stone-600 leading-relaxed">
+						"Fill out this requirements template for a user notification feature. Here's an example of a completed one that matches the quality we expect: [attached example]." The AI matches the depth, specificity, and voice of your example. Acceptance criteria are testable, edge cases are thorough.
+					</p>
+				</div>
+			</div>
+
+			<p>
+				Look through your existing documents and find the one that best fills the requirements for the task at hand. That is your golden master. Keep it alongside your templates so it is always easy to reference.
+			</p>
+
+			<GoldenMasterComparison client:visible />
+
+			<Callout variant="info" title="Golden master rule">
+				<p>
+					Your best existing document is your best template. Find a requirements doc your team considers excellent, strip it down to its structure, and use the original as your golden master. The AI will match the quality and format of what you show it.
+				</p>
+			</Callout>
+
+			<h3>
+				Tips for Effective Templates
+			</h3>
+
+			<ul class="list-disc pl-5 space-y-2">
+				<li>
+					<strong class="text-stone-800">One template per doc type</strong>: a decision, a feature, and a guide each get their own <code>_template.md</code>. Copy the right one to start.
+				</li>
+				<li>
+					<strong class="text-stone-800">Include helper text</strong>: brief descriptions of what goes in each section help the AI fill them out correctly, ideally with examples and questions to answer.
+				</li>
+				<li>
+					<strong class="text-stone-800">Keep them living documents</strong>: update your templates as your team's needs evolve. A stale template produces stale output.
+				</li>
+				<li>
+					<strong class="text-stone-800">Have templates for different scales</strong>: a quick bug fix doesn't need the same template as a major feature.
+				</li>
+				<li>
+					<strong class="text-stone-800">Store them where the AI can find them</strong>: a <code>_template.md</code> in each docs folder means the AI can reference it without you pasting it into every conversation.
+				</li>
+			</ul>
+
+			<p>
+				Once you have templates and golden masters working for you, the next step is packaging them into <strong>skills</strong> so the AI loads them automatically without you having to paste them into every conversation. We'll cover that next.
+			</p>
+		</div>
+	</PageShell>
+</MainLayout>

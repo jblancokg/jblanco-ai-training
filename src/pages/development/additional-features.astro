@@ -1,0 +1,292 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Additional Features - AI Training Guide">
+	<PageShell chapterId="development" subChapterId="additional-features">
+		<div class="prose space-y-6">
+			<p>
+				Beyond the core chat and code generation loop, most AI coding tools ship with features that change how they integrate into your
+				workflow. These aren't essential to get started, but can be very useful for your workflow.
+			</p>
+
+			<h3>Sub-agents</h3>
+
+			<p>
+				Some tools have started offering <strong>sub-agents</strong>: smaller, isolated AI sessions that run in their own
+				context window. When the main AI needs to research something, like reading through a large module or reading documentation,
+				it can delegate that work to a sub-agent. The sub-agent does all the heavy lifting in its own context and returns
+				only a concise summary to your main conversation.
+			</p>
+
+			<p>
+				This is powerful for context management, and it has matured from a novelty into a standard feature. In Claude Code, sub-agents run in their
+				own context, can run in parallel or in the background, and can even be isolated in their own git worktree so parallel edits don't collide.
+				For a deeper dive, see{" "}
+				<a href="https://selfservicebi.co.uk/series/context-window-optimization/subagents-how-delegating-work-solves-the-context-window-problem/" target="_blank" rel="noopener noreferrer">Subagents: How Delegating Work Solves the Context Window Problem</a>.
+			</p>
+
+			<Callout variant="example" title="Example: Claude Code sub-agents for MR review">
+				<p>
+					Two sub-agents that split the work: a fast summarizer and a thorough reviewer. Drop both
+					files in <code>.claude/agents/</code>.
+				</p>
+
+				<p class="mt-4 mb-1 text-xs font-semibold text-stone-600">.claude/agents/mr-diff-summary.md</p>
+				<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 font-mono text-xs text-stone-700 leading-relaxed whitespace-pre-wrap">{`---
+name: mr-diff-summary
+description: Summarizes what changed in the current branch vs main. Use first when starting a MR review.
+tools: Read, Bash, Glob, Grep
+model: haiku
+---
+
+Read the git diff for this branch versus main. Group changes by type: new features, bug fixes, refactors, config changes. Keep each group to a few bullet points.`}</div>
+
+				<p class="mt-4 mb-1 text-xs font-semibold text-stone-600">.claude/agents/mr-reviewer.md</p>
+				<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 font-mono text-xs text-stone-700 leading-relaxed whitespace-pre-wrap">{`---
+name: mr-reviewer
+description: Reviews code changes for logic errors, security issues, and missing tests. Use after mr-diff-summary.
+tools: Read, Bash, Glob, Grep
+model: sonnet
+---
+
+You are a code reviewer. For the changes on this branch, identify logic errors, security issues (injection, auth, data exposure), missing tests, and convention violations. Report findings by file and line number. Be specific and actionable.`}</div>
+
+				<p class="mt-4">
+					With both files checked in, saying <em>"Review the MR changes on this branch"</em> is
+					enough. Claude delegates the summary to the <code>haiku</code>-powered agent (fast and
+					cheap) and the full review to the <code>sonnet</code> one, keeping both out of your main
+					context window. Neither agent has <code>Write</code> or <code>Edit</code> access, so they
+					can't accidentally modify anything.
+				</p>
+
+				<p class="mt-4 mb-1">You can also invoke them directly by name:</p>
+				<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 font-mono text-xs text-stone-700 leading-relaxed whitespace-pre-wrap">{`Use the mr-diff-summary agent to summarize what changed in src/auth/ on this branch.
+
+Use the mr-reviewer agent to review src/auth/session.ts for security issues only.`}</div>
+
+				<p class="mt-4">
+					Naming the agent explicitly skips Claude's matching step and is useful when you want one
+					agent without the other, or when scoping the review to a specific file or directory.
+				</p>
+			</Callout>
+
+			<Callout variant="info" title="Where do sub-agents live?">
+				<p>
+					Sub-agent definitions are markdown files. Each file defines a name, description, allowed tools, and a system prompt.
+					See the <strong>Custom Agents / Sub-agents</strong> section in <a href="/fundamentals/ai-tool-config-files/">AI Tool Config Files</a>{" "}
+					for a full breakdown.
+				</p>
+			</Callout>
+
+			<Callout variant="tip" title="Still verify the output">
+				<p>
+					Sub-agents are well-supported now, but two caveats hold. Support and behavior still vary between tools, so check how yours handles it. And
+					because a sub-agent hands back only a summary, you don't see its full reasoning: for anything that matters, confirm what it actually did
+					rather than trusting the summary.
+				</p>
+			</Callout>
+
+			<Callout variant="info" title="Related: agent teams">
+				<p>
+					Where sub-agents report back to a single lead, <a href="https://code.claude.com/docs/en/agent-teams" target="_blank" rel="noopener noreferrer">agent teams</a>{" "}
+					let several full Claude Code sessions work in parallel and talk to each other, claiming tasks from a shared list and challenging each
+					other's findings. It's experimental and token-hungry, so it fits research, reviews, and independent workstreams rather than routine tasks.
+				</p>
+			</Callout>
+
+			<h3>Workflows</h3>
+
+			<p>
+				Sub-agents let the main AI hand off one piece of work. Workflows go a step further: the AI writes a small orchestration script (in Claude Code,
+				a JavaScript "harness") that spawns and coordinates many sub-agents on its own, running them in parallel, feeding one's output into the next,
+				looping, and retrying, all with plain code instead of improvising in the conversation. Your chat only sees the final result.
+			</p>
+
+			<p>
+				This shines on work that is too big for a single agent: large migrations, security or performance audits, root-cause investigations that test
+				competing hypotheses, and deep research that fans out and cross-checks its own findings. In Claude Code, dynamic workflows are a research-preview
+				feature on Max, Team, and Enterprise plans. See Anthropic's{" "}
+				<a href="https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code" target="_blank" rel="noopener noreferrer">A harness for every task: dynamic workflows in Claude Code</a>.
+			</p>
+
+			<h3>Hooks</h3>
+
+			<p>
+				Hooks are shell commands that your AI tool runs automatically in response to events, without any prompting from you. Hooks exist to
+				separate enforcement from reasoning. They run outside the LLM reasoning loop and are triggered regardless of what the model decides.
+				In Claude Code, for example, you can configure a <code>PostToolUse</code> hook that runs your formatter after every file edit. The
+				formatter just fires, every time, without you asking for it.
+			</p>
+
+			<p>
+				This matters for context management. Without hooks, you end up either reminding the AI in every conversation ("after you edit files,
+				run the formatter") or catching the drift after the fact. With hooks, that class of instruction disappears from your conversations
+				entirely. The behavior is encoded in config, not repeated in chat.
+			</p>
+
+			<p>
+			    Hooks are triggered by specific events. Expand the tables below to see examples of useful events supported by Claude Code and Gemini CLI.
+				Click the links below for the most up to date list of hook events from either tool.
+			</p>
+
+			<details class="group mt-6">
+				<summary class="flex cursor-pointer list-none items-center gap-2 font-semibold text-stone-700 hover:text-stone-900">
+					<span class="text-stone-400 transition-transform group-open:rotate-90">▶</span>
+					<a href="https://code.claude.com/docs/en/hooks#hook-lifecycle" target="_blank" rel="noopener noreferrer">Claude Code Hook Events</a>
+				</summary>
+				<div class="mt-2 overflow-x-auto">
+					<table class="w-full text-sm border-collapse">
+						<thead>
+							<tr class="border-b-2 border-stone-300">
+								<th class="text-left py-3 px-3 font-semibold text-stone-700">Event</th>
+								<th class="text-left py-3 px-3 font-semibold text-stone-700">When it fires</th>
+								<th class="text-left py-3 px-3 font-semibold text-stone-700">Common uses</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="border-b border-stone-200">
+								<td class="py-3 px-3 font-mono text-xs">UserPromptSubmit</td>
+								<td class="py-3 px-3 text-xs">When you submit a prompt, before Claude processes it.</td>
+								<td class="py-3 px-3 text-xs">Inject context automatically, validate or block certain inputs</td>
+							</tr>
+							<tr class="border-b border-stone-200 bg-stone-50/50">
+								<td class="py-3 px-3 font-mono text-xs">PreToolUse</td>
+								<td class="py-3 px-3 text-xs">Before a tool runs. Can allow, deny, or modify the tool call.</td>
+								<td class="py-3 px-3 text-xs">Block writes to protected paths, require confirmation before destructive ops</td>
+							</tr>
+							<tr class="border-b border-stone-200">
+								<td class="py-3 px-3 font-mono text-xs">PostToolUse</td>
+								<td class="py-3 px-3 text-xs">After a tool completes. Receives the tool output.</td>
+								<td class="py-3 px-3 text-xs">Auto-format after edits, run tests after writes, audit logging</td>
+							</tr>
+							<tr class="border-b border-stone-200 bg-stone-50/50">
+								<td class="py-3 px-3 font-mono text-xs">Stop</td>
+								<td class="py-3 px-3 text-xs">When Claude finishes responding. Can prevent Claude from stopping.</td>
+								<td class="py-3 px-3 text-xs">Trigger CI pipelines, send completion notifications</td>
+							</tr>
+							<tr class="border-b border-stone-200">
+								<td class="py-3 px-3 font-mono text-xs">Notification</td>
+								<td class="py-3 px-3 text-xs">When Claude sends a notification (permission prompt, idle, auth).</td>
+								<td class="py-3 px-3 text-xs">Forward to Slack or desktop alerts, webhook pings</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</details>
+
+			<details class="group mt-3">
+				<summary class="flex cursor-pointer list-none items-center gap-2 font-semibold text-stone-700 hover:text-stone-900">
+					<span class="text-stone-400 transition-transform group-open:rotate-90">▶</span>
+					<a href="https://geminicli.com/docs/hooks/#hook-events" target="_blank" rel="noopener noreferrer">Gemini CLI Hook Events</a>
+				</summary>
+				<div class="mt-2 overflow-x-auto">
+					<table class="w-full text-sm border-collapse">
+						<thead>
+							<tr class="border-b-2 border-stone-300">
+								<th class="text-left py-3 px-3 font-semibold text-stone-700">Event</th>
+								<th class="text-left py-3 px-3 font-semibold text-stone-700">When it fires</th>
+								<th class="text-left py-3 px-3 font-semibold text-stone-700">Common uses</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="border-b border-stone-200">
+								<td class="py-3 px-3 font-mono text-xs">SessionStart</td>
+								<td class="py-3 px-3 text-xs">When a session begins (startup, resume, or clear).</td>
+								<td class="py-3 px-3 text-xs">Load project context, set environment variables, fetch recent issues</td>
+							</tr>
+							<tr class="border-b border-stone-200 bg-stone-50/50">
+								<td class="py-3 px-3 font-mono text-xs">BeforeAgent</td>
+								<td class="py-3 px-3 text-xs">After you submit a prompt, before the agent starts planning.</td>
+								<td class="py-3 px-3 text-xs">Inject context, validate input, block certain prompts</td>
+							</tr>
+							<tr class="border-b border-stone-200">
+								<td class="py-3 px-3 font-mono text-xs">BeforeTool</td>
+								<td class="py-3 px-3 text-xs">Before a tool executes. Can block or modify the call.</td>
+								<td class="py-3 px-3 text-xs">Validate arguments, block dangerous operations</td>
+							</tr>
+							<tr class="border-b border-stone-200 bg-stone-50/50">
+								<td class="py-3 px-3 font-mono text-xs">AfterTool</td>
+								<td class="py-3 px-3 text-xs">After a tool completes. Receives the result.</td>
+								<td class="py-3 px-3 text-xs">Auto-format after edits, process results, control output visibility</td>
+							</tr>
+							<tr class="border-b border-stone-200">
+								<td class="py-3 px-3 font-mono text-xs">AfterAgent</td>
+								<td class="py-3 px-3 text-xs">When the agent loop concludes.</td>
+								<td class="py-3 px-3 text-xs">Review output, force a retry, trigger post-completion actions</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</details>
+
+			<Callout variant="example" title="Example: auto-format on edit (Claude Code)">
+				<p>
+					Add this to <code>.claude/settings.json</code> to run <code>pnpm format</code> automatically after any file edit or write:
+				</p>
+				<div class="bg-stone-50 border border-stone-200 rounded-lg px-5 py-4 font-mono text-xs text-stone-700 leading-relaxed whitespace-pre-wrap mt-4">{`{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm format"
+          }
+        ]
+      }
+    ]
+  }
+}`}</div>
+				<p class="mt-4">
+					The <code>matcher</code> field is a regex matched against the tool name. You can scope hooks to specific tools or use a broad match
+					to catch all write operations.
+				</p>
+			</Callout>
+
+			<Callout variant="info" title="Where do hooks live?">
+				<p>
+					Hook configuration lives in your tool's settings file, not in the instruction files like <code>CLAUDE.md</code>. See the{" "}
+					<strong>Hooks</strong> section in <a href="/fundamentals/ai-tool-config-files/">AI Tool Config Files</a> for config locations by
+					tool.
+				</p>
+			</Callout>
+
+			<Callout variant="info" title="Note on Codex Hooks">
+                    <p>
+                        As of April 2026, hooks are an experimental feature in Codex. To use hooks in Codex, you must first enable the feature in{" "}
+                        <code>~/.codex/config.toml</code> (globally) or <code>.codex/config.toml</code> (per-project) by adding the following to the file:
+                    </p>
+                    <div class="bg-stone-50 border border-stone-200 rounded-lg px-5 my-2 font-mono text-xs text-stone-700 leading-relaxed whitespace-pre-wrap">{`
+[features]
+codex_hooks = true
+`}
+                    </div>
+                </Callout>
+			<h3>Checkpointing and Rewind</h3>
+
+			<p>
+				Agentic edits can drift off course a few steps in. Checkpointing gives you a fast undo: Claude Code snapshots your files before each edit, and{" "}
+				<a href="https://code.claude.com/docs/en/checkpointing" target="_blank" rel="noopener noreferrer"><code>/rewind</code></a>{" "}
+				(or pressing Esc twice on an empty prompt) lets you roll the code, the conversation, or both back to any earlier point in the session. That
+				makes ambitious, wide-scale changes safer because you can always return to a known-good state. It is session-level "local undo", not a
+				replacement for Git, and it does not track files changed by bash commands, so keep{" "}
+				<a href="/development/utilizing-git">committing often</a>.
+			</p>
+
+			<h3>Background and Scheduled Tasks</h3>
+
+			<p>
+				Long-running commands (a dev server, a test watcher, a big build) can run in the background so the agent keeps working instead of blocking on
+				them. Agents can also wait for things to happen on a schedule:{" "}
+				<a href="https://code.claude.com/docs/en/scheduled-tasks" target="_blank" rel="noopener noreferrer">Claude Code's <code>/loop</code> and scheduled tasks</a>{" "}
+				run a prompt on a recurring interval, for example "every 10 minutes, check whether the deploy finished and let me know", with cron tools and
+				cloud routines for persistent schedules. In-session loops are scoped to that session and expire after 7 days, so a forgotten loop can't run
+				forever.
+			</p>
+		</div>
+	</PageShell>
+</MainLayout>

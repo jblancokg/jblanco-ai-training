@@ -1,0 +1,98 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Productive Waiting - AI Training Guide">
+	<PageShell chapterId="fundamentals" subChapterId="productive-waiting">
+		<div class="prose space-y-6">
+			<p>
+				AI coding tools can take anywhere from a few seconds to several minutes to complete a
+				task. Longer tasks like implementing a feature across multiple files, running tests, or
+				refactoring a module can take a while.
+			</p>
+
+			<p>
+				The temptation is to check your phone, or just wait passively. But
+				this dead time is actually some of the most valuable time in your workflow. You are the
+				domain expert on your project; the AI is handling the mechanical work, which frees you
+				to do the thinking work that only you can do.
+			</p>
+
+			<h3>You Are Still the Domain Expert</h3>
+
+			<p>
+				No matter how capable the AI gets at writing code, it does not understand the business,
+				the users, or the broader context of what you're building. It doesn't know about upcoming features or bugs.
+				You are still the product owner and the domain expert on your feature.
+			</p>
+
+			<h3>What to Do While AI Works</h3>
+
+			<div class="space-y-4 my-8">
+				<Callout variant="tip" title="Review the last thing it produced">
+					<p>
+						If the AI just finished a previous task, use this time to review that output. Read
+						the diff, check the logic, make sure it matches what you asked for. Catching issues
+						early saves you from compounding problems across tasks.
+					</p>
+				</Callout>
+
+				<Callout variant="tip" title="Write requirements for the next task">
+					<p>
+						Think ahead. Draft the prompt or requirements for the next piece of work so you can
+						hand it off the moment the current task finishes. This keeps your pipeline moving
+						and avoids the start-stop pattern that kills momentum.
+					</p>
+				</Callout>
+
+				<Callout variant="tip" title="Research and context gathering">
+					<p>
+						Look up documentation for an API you'll need later. Read through a pull request
+						from a teammate. Check the ticket backlog for context on upcoming work. This kind
+						of research directly improves the quality of what you'll ask the AI to do next.
+					</p>
+					<p class="mt-2">
+						You can also hand this off to a second AI chat. While your main agent implements, ask
+						another one read-only questions like "where is rate limiting handled in this codebase?"
+						or "does this library support X?", or have it help you plan your next feature: draft
+						requirements or a rough approach so it's ready to hand off the moment the current task
+						finishes. Investigation and planning are low-risk because nothing is being changed, and
+						the results are ready when you are.
+					</p>
+				</Callout>
+
+				<Callout variant="tip" title="Think about edge cases and testing">
+					<p>
+						While the AI writes the happy path, think about what could go wrong. What inputs
+						haven't been considered? What do you need to test when it's done? Having a mental
+						list of edge cases ready makes your review better and your testing more thorough.
+					</p>
+				</Callout>
+
+				<Callout variant="tip" title="Update documentation or tickets">
+					<p>
+						Update your Jira tickets, write notes in Confluence, or document a decision you
+						just made. Documentation as we talked about is now more important than ever, and one of the most valuable things in your repository going forward.
+					</p>
+				</Callout>
+			</div>
+
+			<h3>The Shift in Your Role</h3>
+
+			<p>
+				Working with AI changes the shape of your day. You spend less time typing code and more
+				time directing, reviewing, and planning. This is closer to how a
+				senior engineer or tech lead already works: setting direction, reviewing output, and
+				making sure the right thing gets built.
+			</p>
+
+			<Callout variant="info" title="The practical takeaway">
+				<p>
+					AI handles the typing. You handle the thinking. When the AI is working, stay engaged between tasks and get the most value out of it.
+				</p>
+			</Callout>
+		</div>
+	</PageShell>
+</MainLayout>

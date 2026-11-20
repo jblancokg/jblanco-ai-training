@@ -1,0 +1,3 @@
+2026-02-27 10:44:36.047 osascript[6116:9336758] HIToolbox: received notification of WindowServer event port death.
+2026-02-27 10:44:36.047 osascript[6116:9336758] port matched the WindowServer port created in BindCGSToRunLoop
+2026-02-27 10:44:36.623 osascript[6116:9336758] +[NSXPCSharedListener endpointForReply:withListenerName:replyErrorCode:]: an error occurred while attempting to obtain endpoint for listener 'ClientCallsAuxiliary': Connection interrupted

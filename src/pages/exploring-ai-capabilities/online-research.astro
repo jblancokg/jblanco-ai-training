@@ -1,0 +1,63 @@
+---
+import Answer from "../../components/challenge/Answer.astro";
+import ChallengeIntro from "../../components/challenge/ChallengeIntro.astro";
+import Checklist from "../../components/challenge/Checklist.astro";
+import Message from "../../components/challenge/Message.astro";
+import Task from "../../components/challenge/Task.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Online Research - AI Training Guide">
+	<PageShell chapterId="exploring-ai-capabilities" subChapterId="online-research">
+		<ChallengeIntro skill="The agent can research a topic online and write it up as a report, with every claim linked to where it came from.">
+			The claims fraud team keeps getting phone claims that blame fictional kaiju. They want a reference their handlers can check a
+			claim against, and a check that none of our own kaiju share a name with a fictional one.
+		</ChallengeIntro>
+
+		<Message kind="email" subject="Fictional kaiju reference" from="Claims Fraud Team" to="Web Team" date="Tue, 29 Sep 2026 11:20">
+			<p>
+				Phone claims keep blaming Godzilla. Handlers need a reference of fictional kaiju, from films, TV, anime and games, so they
+				can spot a claim that names one. Include anything from the last couple of years; that's what people quote now.
+			</p>
+			<p>
+				While you're at it, check none of our kaiju share a name with a fictional one. We'd rather know before a journalist does.
+			</p>
+		</Message>
+
+		<Task>Write a prompt to have your agent research fictional kaiju online and produce an HTML report the fraud team can use.</Task>
+
+		<Checklist
+			items={[
+				"Cover fictional kaiju from at least four franchises.",
+				"Give each one its name and aliases, where and when it first appeared, its height and what it looks like.",
+				"Include entries from the last two years.",
+				"Link every entry to its source.",
+				"Say which source it trusted when sources disagree.",
+				"Compare our own kaiju against the fictional ones and list any name clashes or near-misses.",
+				"Produce the whole thing as an HTML report.",
+			]}
+		/>
+
+		<Answer
+			prompt={`Research fictional kaiju online, from films, TV, anime and games, including anything from the last two years. Search for each one rather than relying on memory.
+
+For each entry give its name and aliases, where and when it first appeared, its height and what it looks like, with a link to the source you used. When sources disagree, say which one you trusted.
+
+Then get our own kaiju from the API or the admin portal and check them for name clashes or near-misses with the fictional ones.
+
+Produce an HTML report our claims handlers can use to spot a claim that names a fictional kaiju.`}
+		>
+			<p>
+				An agent can list the famous kaiju from memory without searching. The "last two years" rule and the per-entry sources are
+				there to force real searches. Check the report by clicking three source links, and ask the agent where a recent entry came
+				from. A made-up or dead link is the failure to look for.
+			</p>
+			<p>
+				Our kaiju are Old Gullet, Cinderback, Meridian, Thornmaw, Vessa and Pellucid. A good agent reads them from the app instead
+				of guessing, then checks each one.
+			</p>
+			<p>Fan wikis often disagree on heights and first appearances. A good report says which source it went with.</p>
+		</Answer>
+	</PageShell>
+</MainLayout>

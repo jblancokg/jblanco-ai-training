@@ -1,0 +1,68 @@
+---
+import Answer from "../../components/challenge/Answer.astro";
+import ChallengeIntro from "../../components/challenge/ChallengeIntro.astro";
+import Checklist from "../../components/challenge/Checklist.astro";
+import Message from "../../components/challenge/Message.astro";
+import Task from "../../components/challenge/Task.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Agent File - AI Training Guide">
+	<PageShell chapterId="exploring-ai-capabilities" subChapterId="agent-file">
+		<ChallengeIntro skill="The agent can draft an AGENTS.md from the codebase, but only you know what it got wrong and what you had to explain yourself.">
+			Kaiju Mutual has no agent file, so every session starts by rediscovering the project. You'll have the agent write a first
+			draft, then edit it by hand.
+		</ChallengeIntro>
+
+		<Message kind="ticket" id="WEB-104" type="Task" priority="Medium" reporter="Engineering Lead" title="Add an AGENTS.md to the repo">
+			<p>
+				Everyone on the team uses a different agent, and each one works out the project from scratch every session. Add an
+				AGENTS.md at the repo root so they all start with the same context.
+			</p>
+			<p>Keep it short: what's in the repo, how it's laid out, the commands, and how we use herdr and agent-browser.</p>
+		</Message>
+
+		<Task>Write a prompt to have your agent draft an AGENTS.md for Kaiju Mutual, then edit it yourself.</Task>
+
+		<Checklist
+			items={[
+				"Read the code and the docs before writing anything.",
+				"Describe what Kaiju Mutual is in a sentence or two.",
+				"List the apps, where each one lives, and the stack.",
+				"List the commands: install, run the servers, migrate and seed the database, typecheck, lint and format.",
+				"Say that the servers are already running in another herdr pane, so it should read the logs there instead of starting them again.",
+				"Explain how to use agent-browser to check changes in a real browser.",
+				"Link to the docs in docs/training instead of copying them.",
+				"Stay under 100 lines.",
+			]}
+		/>
+
+		<Checklist
+			title="Then, by hand"
+			items={[
+				"Add anything you had to explain to the agent during Project Setup.",
+				"Remove anything that's wrong, or that the agent could work out from the code on its own.",
+				"Start a new session and check that your agent loaded the file.",
+			]}
+		/>
+
+		<Answer
+			prompt={`Draft an AGENTS.md at the repo root for this project. Read the code and the docs first.
+
+Cover what the project is, the apps and where each one lives, the stack, and the commands we use. The dev servers are already running in another herdr pane, so read that pane for logs instead of starting them. Explain how to use agent-browser to check changes in a real browser. Link to the docs in docs/training rather than copying them. Keep it under 100 lines.`}
+		>
+			<p>
+				The draft covers what the agent can read from the repo. It can't know what tripped you up during setup, or which of your
+				habits it should follow. The hand edit adds those. See <a href="/task-breakdowns/agents-md">AGENTS.md</a> for what belongs
+				in the file and what to leave out.
+			</p>
+			<p>
+				In Claude Code, don't use <code>/init</code> for this. It writes a <code>CLAUDE.md</code>, and when a{" "}
+				<code>CLAUDE.md</code> exists Claude Code reads it instead of <code>AGENTS.md</code> by default. If you need both, put{" "}
+				<code>@AGENTS.md</code> at the top of the <code>CLAUDE.md</code> to import it. Run <code>/memory</code> to see which
+				files loaded. Cursor reads <code>AGENTS.md</code> directly.
+			</p>
+		</Answer>
+	</PageShell>
+</MainLayout>

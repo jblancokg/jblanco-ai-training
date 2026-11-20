@@ -1,0 +1,208 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Markdown: The Language of AI - AI Training Guide">
+  <PageShell chapterId="fundamentals" subChapterId="markdown">
+    <div class="prose space-y-6">
+      <p>
+        If there's one skill that will immediately improve your experience with
+        AI tools, it's learning Markdown. Every major AI assistant — Claude,
+        ChatGPT, Copilot — reads and writes Markdown natively. It's how they
+        format their responses, how they were trained, and it's how they expect structured input. You
+        don't need to be an expert, but knowing the basics makes everything
+        smoother.
+      </p>
+
+      <h3>Why Markdown?</h3>
+
+      <p>
+        Markdown is a lightweight way to add structure and formatting to plain
+        text. It was designed to be readable even in its raw form — no angle
+        brackets, no complex syntax. When you write a prompt with clear
+        headings, bullet lists, and code blocks, the AI can parse your intent
+        more accurately. And when the AI responds, it uses Markdown to organize
+        its output.
+      </p>
+
+      <p>
+        Beyond AI, Markdown is everywhere in software development: GitHub
+        READMEs, Jira tickets, Confluence pages, Slack messages, pull request
+        descriptions. Learning it once pays off across every tool you use.
+      </p>
+
+      <p>
+        It's also the format of the instruction files this guide keeps coming
+        back to. The <code>AGENTS.md</code> and <code>CLAUDE.md</code> files that
+        tools read automatically, and the skills you'll write later, are all just
+        Markdown. The same basics you use in a prompt are the same basics you use
+        to document a project for the AI.
+      </p>
+
+      <h3>The Essentials</h3>
+
+      <p>
+        Here's the small subset of Markdown that covers 90% of what you'll use
+        with AI tools:
+      </p>
+
+      <div class="my-8 border border-stone-200 rounded-lg overflow-hidden">
+        <div class="bg-stone-50 px-5 py-3 border-b border-stone-200">
+          <div
+            class="text-xs font-bold text-stone-500 uppercase tracking-wider"
+          >
+            Markdown basics
+          </div>
+        </div>
+        <div
+          class="px-5 py-4 font-mono text-sm text-stone-700 leading-relaxed whitespace-pre bg-white overflow-x-auto"
+        >{`# Heading 1
+## Heading 2
+### Heading 3
+
+**Bold text** for emphasis
+*Italic text* for lighter emphasis
+
+- Bullet list item
+- Another item
+  - Nested item
+
+1. Numbered list
+2. Second item
+
+\`inline code\` for short references
+
+\`\`\`
+code block for
+multiple lines of code
+\`\`\`
+
+> Blockquote for calling out
+> important information
+
+[Link text](https://example.com)
+
+| Column   | Another  |
+| -------- | -------- |
+| Cell one | Cell two |
+| Cell A   | Cell B   |`}
+        </div>
+      </div>
+
+      <p>
+        That's genuinely it for everyday use. Headings to structure your
+        prompts, bold for emphasis, lists for multiple items, code blocks when
+        you're sharing code, and tables when you need to compare things
+        side by side. You'll be surprised how much clearer your AI interactions
+        become once you start structuring your prompts this way.
+      </p>
+
+      <h3>Structured Prompts Get Better Results</h3>
+
+      <div class="space-y-4 my-8">
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div
+            class="text-sm font-semibold text-red-400 mb-2 line-through decoration-red-300"
+          >
+            Unstructured prompt
+          </div>
+          <p class="text-sm text-stone-600 leading-relaxed font-mono">
+            I need a function that validates email addresses. It should check
+            the format and also check if the domain has MX records. Use
+            TypeScript. It should return an object with isValid and reason
+            fields. Also add tests.
+          </p>
+        </div>
+
+        <div class="border border-stone-200 rounded-lg px-5 py-4">
+          <div class="text-sm font-semibold text-green-700 mb-2">
+            Structured with Markdown
+          </div>
+          <div
+            class="text-sm text-stone-600 leading-relaxed font-mono whitespace-pre"
+          >
+{`## Task
+Write an email validation function in TypeScript.
+
+## Requirements
+- Check format against RFC 5322
+- Verify domain has MX records
+- Return \`{ isValid: boolean, reason: string }\`
+
+## Tests
+Include unit tests covering:
+- Valid addresses
+- Invalid format
+- Valid format but no MX record`}
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Same information, but the structured version is easier for both you and
+        the AI to parse. The AI is less likely to miss a requirement when each
+        one is its own bullet point.
+      </p>
+
+      <h3>Learn More</h3>
+
+      <p>
+        If you're new to Markdown or want a refresher, these resources will get
+        you up to speed quickly:
+      </p>
+
+      <div class="space-y-3 my-8">
+        <div class="flex gap-3 items-start">
+          <div class="w-2 h-2 rounded-full bg-orange-400 shrink-0 mt-2"></div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            <a
+              href="https://www.markdowntutorial.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-semibold"
+              >Markdown Tutorial</a
+            > — an interactive, hands-on tutorial you can complete in your browser
+            in about 10 minutes. The best place to start if you've never used Markdown.
+          </p>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div class="w-2 h-2 rounded-full bg-orange-400 shrink-0 mt-2"></div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            <a
+              href="https://www.markdownguide.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-semibold"
+              >Markdown Guide</a
+            > — a comprehensive reference you can bookmark and come back to. Covers
+            basic syntax, extended syntax, and tool-specific variations.
+          </p>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div class="w-2 h-2 rounded-full bg-orange-400 shrink-0 mt-2"></div>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            <a
+              href="https://commonmark.org/help/tutorial/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-semibold"
+              >CommonMark Tutorial</a
+            > — another interactive tutorial with practice exercises after each lesson.
+            Good if you want to make sure you've actually retained it.
+          </p>
+        </div>
+      </div>
+
+      <Callout variant="tip" title="You already know some of this">
+        <p>
+          If you've ever written a GitHub README, formatted a Slack message with
+          asterisks, or edited a Jira ticket description — you've used Markdown.
+          It's the same syntax everywhere, with minor variations. Ten minutes
+          with the tutorial above and you'll have it locked in.
+        </p>
+      </Callout>
+    </div>
+  </PageShell>
+</MainLayout>

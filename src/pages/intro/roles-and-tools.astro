@@ -1,0 +1,67 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Roles & Tools - AI Training Guide">
+  <PageShell chapterId="intro" subChapterId="roles-and-tools">
+    <div class="prose space-y-6">
+      <p>
+        This guide is organized around two roles: <strong class="text-stone-800">Strategy</strong> and <strong class="text-stone-800">Developer</strong>. You'll see these marked throughout the sidebar and in the content.
+      </p>
+
+      <div class="grid grid-cols-2 gap-4 my-8">
+        <Callout variant="info" title="Strategy Track">
+          <p>
+            Requirements gathering, competitive research, writing specs, stakeholder communication. Focused on getting the AI to help you think clearly and produce documents, requirements and other materials that are useful for the team.
+          </p>
+        </Callout>
+        <Callout variant="success" title="Developer Track">
+          <p>
+            Writing code, debugging, testing, code review, documentation. Focused on getting the AI to produce correct, maintainable code that fits your codebase.
+          </p>
+        </Callout>
+      </div>
+
+      <Callout variant="example" title="Read all of it">
+        <p>
+          Even if the document is not focused directly on your role, read through the other track too. In practice, most people cross these boundaries regularly, and increasingly strategy and engineering share responsibility for the same work: writing requirements, shaping specs, reviewing output. The lines are blurring, and the AI skills in both tracks apply to both audiences.
+        </p>
+      </Callout>
+
+      <h3>
+        The Tools
+      </h3>
+
+      <p>
+        We'll reference two primary tools throughout this guide:
+      </p>
+
+      <div class="space-y-4 my-6">
+        <div class="flex gap-4 items-start">
+          <div class="shrink-0 w-20 h-10 bg-stone-800 rounded-lg flex items-center justify-center text-white text-xs font-mono">Claude</div>
+          <div>
+            <div class="text-sm font-semibold text-stone-700 mb-0.5">Claude Cowork</div>
+            <p class="text-sm text-stone-500 leading-relaxed">
+              Anthropic's Cowork assistant. Runs as a desktop app but can access files on your system and tools like Confluence or other systems as needed for your project. Web and mobile versions are currently rolling out in beta.
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="shrink-0 w-20 h-10 bg-stone-800 rounded-lg flex items-center justify-center text-white text-xs font-mono">Cursor</div>
+          <div>
+            <div class="text-sm font-semibold text-stone-700 mb-0.5">Cursor</div>
+            <p class="text-sm text-stone-500 leading-relaxed">
+              An AI-first code editor built on VS Code. Integrates AI completions and chat directly into the editing experience, plus an Agent Mode that can run multi-step tasks and terminal commands on your behalf.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        The techniques in this guide aren't exclusive to these tools — the principles apply broadly. But we'll use these two as our concrete points since they represent the current state of the art for AI interactions.
+      </p>
+    </div>
+  </PageShell>
+</MainLayout>

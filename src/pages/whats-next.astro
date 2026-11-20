@@ -1,0 +1,63 @@
+---
+import PageShell from "../components/PageShell.astro";
+import { SentimentTimeline } from "../components/SentimentTimeline";
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout title="What's Next - AI Training Guide">
+	<PageShell chapterId="whats-next">
+		<div class="prose space-y-6">
+			<p class="text-base text-stone-600 leading-[1.85]">
+				AI tooling moves fast, and this page tracks the frontier: what is emerging now and where things
+				seem headed. Some of what lived here a few months ago has already become everyday tooling and moved
+				into the main guide (sub-agents are a good example, now covered under{" "}
+				<a href="/development/additional-features">Additional Features</a>). What follows is the current edge.
+			</p>
+
+			<h3>Autonomous and Cloud Agents</h3>
+
+			<p>
+				The clearest direction of travel is agents that run longer and more independently. Instead of watching every step, you hand off a scoped task and the agent works through it, sometimes for hours, checkpointing as it goes and reporting back when it is done or stuck. This is moving off your laptop too: agents now run in the cloud and on the web, and can be put on a schedule to check something or react to an event (see <a href="/development/additional-features">background and scheduled tasks</a>). The open questions are less about capability and more about trust: how much you let an agent work unattended, and how you verify hours of work you did not watch happen.
+			</p>
+
+			<h3>Multi-Agent Orchestration</h3>
+
+			<p>
+				Single sub-agents have matured; the frontier now is coordinating many of them. Two patterns are emerging. <a href="/development/additional-features">Agent teams</a> let several full agents work in parallel and message each other, claiming tasks from a shared list. Workflows go further, letting the AI write a deterministic script that spawns and routes dozens of sub-agents for big jobs like migrations, audits, and deep research. Both are early and token-hungry, but they point at how larger work gets done: less one long conversation, more a small org chart of agents you supervise. See Anthropic's <a href="https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code" target="_blank" rel="noopener noreferrer">write-up on dynamic workflows</a>.
+			</p>
+
+			<h3>Collaborative and Team Agents</h3>
+
+			<p>
+				Most AI sessions today are solo: one person, one agent. Two different things often get lumped together as "collaboration", and it is worth keeping them apart. Claude Cowork, which went generally available in April 2026, is an autonomous <em>workspace</em> for one person to run several agent tasks at once. It is not multiplayer: you cannot co-drive a session or hand one off mid-task.
+			</p>
+
+			<p>
+				The genuinely multiplayer pattern is a shared agent a whole team talks to. Claude Tag, the Slack-native agent, is the clearest example: one agent identity in a channel that everyone can invoke, building context from the team's conversations over time. This is early, and teams are still working out who "drives", how to avoid conflicting instructions, and when a shared agent beats two separate ones. But the payoff is real: less context lost in handoffs and fewer "that's not what I meant" moments.
+			</p>
+
+			<h3>Companies Are Going AI-First</h3>
+
+			<p>
+				The bigger shift is organizational. As agents do more of the work, the teams that get the most out of them are the ones that write things down so an agent can find and use them: decisions, conventions, runbooks, and product docs, kept in the repo or somewhere an agent can reach. It is the same lesson as our <a href="/documentation/why-it-matters">Documentation</a> chapter, scaled to the whole company: your docs are now an input to your best tool, not just a courtesy to the next human.
+			</p>
+
+			<p>
+				Y Combinator has put this bluntly, reframing its famous motto as "make something agents want" and noting that agents increasingly pick tools based on documentation quality rather than marketing. Resend and Mintlify get cited as companies whose docs are structured well enough that agents parse, understand, and recommend them without a human ever seeing the homepage. The YC Lightcone episode <a href="https://www.ycombinator.com/library/NK-the-ai-agent-economy-is-here" target="_blank" rel="noopener noreferrer">The AI Agent Economy Is Here</a> makes the case, and the <a href="https://www.stateofdocs.com/2026/ai-and-documentation-consumption" target="_blank" rel="noopener noreferrer">State of Docs Report 2026</a> digs into how agents actually consume documentation.
+			</p>
+
+			<h3>How We Got Here</h3>
+
+			<p>
+				The AI tools landscape has shifted dramatically in a short time. GitHub Copilot had
+				a massive head start and was genuinely ahead of everything else for over a year. But
+				as competitors shipped faster and the underlying models improved, developer sentiment
+				started to shift. Hover over the lines below to see how perception has moved.
+			</p>
+
+			<div class="not-prose my-8 border border-stone-200 rounded-lg p-5">
+				<SentimentTimeline client:load />
+			</div>
+		</div>
+	</PageShell>
+</MainLayout>

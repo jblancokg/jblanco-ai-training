@@ -1,0 +1,80 @@
+---
+import Callout from "../../components/Callout.astro";
+import ModelCutoffTable from "../../components/ModelCutoffTable";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Choosing Libraries & Frameworks - AI Training Guide">
+	<PageShell chapterId="development" subChapterId="choosing-libraries">
+		<div class="prose space-y-6">
+			<p>
+				The libraries and frameworks you choose for a project have a direct impact on how well AI tools can help you.
+				This comes down to two things: how much training data the AI has seen for a given library,
+				and whether the AI has access to up-to-date documentation.
+			</p>
+
+			<h3>Popular Libraries Produce Better Results</h3>
+
+			<p>
+				AI models learn from publicly available code. Libraries with large communities, lots of Stack Overflow answers,
+				blog posts, and open-source usage show up heavily in training data. When you use React, Express, or Django,
+				the AI has seen thousands of examples of how they work. When you use a niche library with 200 GitHub stars,
+				the AI is mostly guessing.
+			</p>
+
+			<p>
+				This doesn't mean you should always pick the most popular option. But when two libraries solve the same problem
+				equally well, the one with a larger ecosystem will consistently give you better AI-assisted results.
+			</p>
+
+			<p>
+				Libraries that reduce boilerplate also tend to work better with AI. If a library lets you express intent in fewer lines of code,
+				the AI has less room to introduce errors and the output stays within context window limits more easily.
+				A validation library like Zod, for example, lets you declare schemas concisely rather than writing manual checks,
+				and the AI handles it well because the pattern is clear and compact.
+			</p>
+
+			<Callout variant="tip" title="Internal libraries">
+				<p>
+					For internal or proprietary libraries, the AI has zero training data. It can only work with what it
+					sees in your project. Well-typed code with descriptive parameter names and JSDoc or docstring comments
+					gives the AI most of what it needs.
+				</p>
+			</Callout>
+
+			<h3>AI Training Data Can Be Out of Date</h3>
+
+			<p>
+				AI models have a training cutoff. They learned from code and documentation available up to a certain date,
+				which means they may not know about recent API changes, new major versions, or deprecated patterns.
+				If a library released a breaking v2 after the model's cutoff, the AI will confidently write v1 code unless
+				you give it something better to work from.
+			</p>
+
+			<p>
+				There are two practical ways to handle this:
+			</p>
+
+			<ul class="list-disc pl-6 space-y-3">
+				<li>
+					<strong>llms.txt files</strong> &mdash; A growing number of libraries and frameworks now publish an{" "}
+					<a href="https://llmstxt.org/" target="_blank" rel="noopener noreferrer">/llms.txt</a>{" "}
+					file on their website. This is a markdown file designed specifically for AI tools to read,
+					containing concise, structured documentation about the project. Many AI coding tools can fetch these
+					automatically, giving the model up-to-date knowledge without you having to paste docs into the chat.
+					When evaluating libraries, check whether they provide one.
+				</li>
+				<li>
+					<strong>Skills</strong> &mdash; You can create{" "}
+					<a href="/requirements-writing/skills">skills</a>{" "}
+					that teach your AI tool the correct patterns for a specific library or framework version.
+					A skill can include API signatures, usage examples, and conventions that the AI should follow.
+					This is especially useful for internal libraries or newer tools that the AI has limited training data for.
+				</li>
+			</ul>
+
+			<ModelCutoffTable client:visible />
+		</div>
+	</PageShell>
+</MainLayout>

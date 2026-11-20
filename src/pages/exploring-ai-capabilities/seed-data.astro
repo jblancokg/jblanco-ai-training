@@ -1,0 +1,79 @@
+---
+import Callout from "../../components/Callout.astro";
+import Answer from "../../components/challenge/Answer.astro";
+import ChallengeIntro from "../../components/challenge/ChallengeIntro.astro";
+import Checklist from "../../components/challenge/Checklist.astro";
+import Message from "../../components/challenge/Message.astro";
+import Task from "../../components/challenge/Task.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Sub-agents: Seed the Database - AI Training Guide">
+	<PageShell chapterId="exploring-ai-capabilities" subChapterId="seed-data">
+		<ChallengeIntro skill="Sub-agents let you split a long task into parts that run in parallel, so the work finishes sooner and your main conversation stays small.">
+			The local database only has a handful of rows per table, which isn't enough to test paging or anything that needs volume.
+			You'll have your agent generate a much larger, realistic seed by handing parts of the work to sub-agents.
+		</ChallengeIntro>
+
+		<Callout variant="info" title="Do challenge 4 first">
+			<p>
+				Debug from an Email only reproduces on one refunded payment in the current seed. Finish it before you regenerate the data.
+			</p>
+		</Callout>
+
+		<Message kind="ticket" id="WEB-131" type="Task" priority="Medium" reporter="QA Lead" title="Seed data is too thin to test with">
+			<p>
+				Every list in the portals fits on one page, so we can't test paging, sorting or search with anything like real volume.
+				Can we get a seed that looks like a real book of business?
+			</p>
+			<p>
+				Over 1,000 rows each for policyholders, policies, claims, payments, kaiju events, quotes and municipal assets. Around 100
+				each for the lists: regions, districts, kaiju classes, perils, claim handlers and kaiju. Keep the three plans as they are,
+				and give every district a forecast.
+			</p>
+			<p>Keep the existing sample customers, Dana Okafor included. Support uses her account in demos.</p>
+		</Message>
+
+		<Task>Write a prompt to have your agent expand the seed with sub-agents working in parallel.</Task>
+
+		<Checklist
+			items={[
+				"Split the work across sub-agents that run at the same time.",
+				"Reach the row counts in the ticket, with a forecast for every district.",
+				"Make names, addresses, dates and amounts look real and fit together, so each claim makes sense for its policy, peril and kaiju event.",
+				"Keep the existing sample rows, including Dana Okafor and her payments.",
+				"Leave a seed that runs cleanly with db:seed, and show the new data in the portals.",
+			]}
+		/>
+
+		<Answer
+			prompt={`The seed for the database is pretty light. I want to test paging and anything else that needs a lot more data.
+
+- Get these to over 1000 rows each: policyholders, policies, claims, payments, kaiju events, quotes and municipal assets.
+- The lists can have around 100 each: regions, districts, kaiju classes, perils, claim handlers and kaiju. Keep the three plans as they are.
+- Each district needs its forecast.
+
+Make the data realistic. Names, addresses, dates and amounts should look real and fit together, so a claim makes sense for its policy, its peril and the kaiju event behind it. Research online for things like kaiju names and coastal place names. Keep the existing sample rows, including Dana Okafor and her payments.
+
+Use sub-agents to do the work in parallel.`}
+		>
+			<p>
+				The hard part is consistency between tables. Rows point at list entries by name, so generated policies have to use real
+				district and plan names, and claims have to link to real policies and, optionally, events. A good agent generates the
+				lists first, then hands each sub-agent the names it must use.
+			</p>
+			<p>
+				Check that Dana's refunded payment survived. If it didn't, challenge 4 can't be reproduced any more.
+			</p>
+			<p>
+				Kaiju, forecasts and events also come from the Tidewatch sync. It overwrites the rows it sends, so forecasts for the
+				original six districts get replaced on the next sync. That's expected, not a bug in your seed.
+			</p>
+			<p>
+				Sub-agents save wall-clock time and keep the main conversation's context small, but they don't save tokens. Each one
+				starts with its own context, so a parallel run usually uses more tokens in total than doing the work in one thread.
+			</p>
+		</Answer>
+	</PageShell>
+</MainLayout>

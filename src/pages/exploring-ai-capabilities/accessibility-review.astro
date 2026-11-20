@@ -1,0 +1,79 @@
+---
+import Answer from "../../components/challenge/Answer.astro";
+import ChallengeIntro from "../../components/challenge/ChallengeIntro.astro";
+import Checklist from "../../components/challenge/Checklist.astro";
+import Message from "../../components/challenge/Message.astro";
+import Task from "../../components/challenge/Task.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Accessibility Review - AI Training Guide">
+	<PageShell chapterId="exploring-ai-capabilities" subChapterId="accessibility-review">
+		<ChallengeIntro skill="For a broad, repetitive review, fan the work out to sub-agents on a cheaper, faster model, and keep the expensive model for pulling the results together.">
+			Kaiju Mutual needs an accessibility review of all three apps before its next release. You'll have the agent check every
+			page, fix what's quick, and report the rest.
+		</ChallengeIntro>
+
+		<Message kind="email" subject="Accessibility review before the release" from="Head of Digital" to="Web Team" date="Tue, 6 Oct 2026 08:40">
+			<p>
+				A policyholder who uses a screen reader wrote in to say they couldn't finish a claim. Legal wants a full accessibility
+				review of the website and both portals before the next release.
+			</p>
+			<p>
+				Fix anything quick and safe. For anything that changes how a page looks or works, give us a list so design and product
+				can weigh in. Please send it as one report we can pass around.
+			</p>
+		</Message>
+
+		<Task>Write a prompt to have your agent review every page of the apps for accessibility, using sub-agents on a cheaper model.</Task>
+
+		<Checklist
+			items={[
+				"Cover every page of the website, the consumer portal and the admin portal.",
+				"Hand the pages out to sub-agents running on a cheaper, faster model.",
+				"Test the running apps in the browser, not just the source code.",
+				"Fix the simple issues and mark them as fixed.",
+				"List the issues that need a design or behavior change for the team to decide, without changing them.",
+				"Say what an automated check can't cover and still needs a person.",
+				"Produce one HTML report covering everything.",
+			]}
+		/>
+
+		<Answer
+			prompt={`Complete an accessibility review of the website, the consumer portal and the admin portal against WCAG 2.2 AA. Check each page in agent-browser as well as in the code.
+
+Fix any clear, simple issues now and mark them as fixed in the report. For anything that would change functionality or design, list it with the page, the problem and a suggested fix, so we can get feedback from the team. Produce one HTML report for everything when done.
+
+To get this done quickly, fan out one sub-agent per page, running on a cheaper, faster model such as Sonnet.`}
+		>
+			<p>
+				A per-page check is narrow and repetitive, so a smaller model handles it well and costs less. The main agent, on the
+				stronger model, merges the findings, removes duplicates and writes the report.
+			</p>
+			<p>
+				In Claude Code you can name the sub-agent model in the prompt, or set <code>model</code> in a sub-agent's definition
+				under <code>.claude/agents/</code>. In Cursor, set <code>model</code> in the frontmatter of a custom sub-agent under{" "}
+				<code>.cursor/agents/</code>. Some of Cursor's built-in sub-agents pick their own model.
+			</p>
+			<p>
+				Expect two quick fixes. The peril picker on the new claim form and the plan picker on the new quote page have radio
+				buttons with no accessible name, so a screen reader reads out five identical "radio" items. That's the claim the
+				policyholder couldn't finish. The labels are in the code, but the browser never connects them, so an agent that only
+				reads the source usually misses it. The sidebar menu in both portals also isn't inside a landmark.
+			</p>
+			<p>
+				Fix the radios where they're used. Rewriting the shared components in <code>components/ui</code> goes further than the
+				task needs.
+			</p>
+			<p>
+				Expect three contrast issues for the team: light text on the siren orange, teal on grey-green forecast badges, and faded
+				inactive tabs on the claims pages. The orange is the brand's alarm color, so the agent should list it, not recolor it.
+			</p>
+			<p>
+				A good report also says what a scan can't check: keyboard flow, focus in the quote modal and dialogs, toast
+				announcements, zoom, and text over the home page's gradients and 3D scene.
+			</p>
+		</Answer>
+	</PageShell>
+</MainLayout>

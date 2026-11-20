@@ -1,0 +1,68 @@
+---
+import Answer from "../../components/challenge/Answer.astro";
+import ChallengeIntro from "../../components/challenge/ChallengeIntro.astro";
+import Checklist from "../../components/challenge/Checklist.astro";
+import Message from "../../components/challenge/Message.astro";
+import Task from "../../components/challenge/Task.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Legacy Refactor - AI Training Guide">
+	<PageShell chapterId="exploring-ai-capabilities" subChapterId="legacy-refactor">
+		<ChallengeIntro skill="Before changing legacy code, have the agent pin down what it actually does with tests. Then it can rewrite it safely and measure the result.">
+			Every quote price comes from an old JavaScript rating engine that nobody wants to touch. It's slow, and the business
+			needs every price to stay exactly the same after the rewrite.
+		</ChallengeIntro>
+
+		<Message kind="ticket" id="WEB-148" type="Story" priority="High" reporter="Tech Lead" title="Rewrite the rating engine in TypeScript">
+			<p>
+				The quote modal takes a second or more to show a price, and nobody dares touch the rating engine. Rewrite it in
+				TypeScript. Customers must get exactly the same prices as today, so prove it.
+			</p>
+		</Message>
+
+		<Task>Write a prompt to have your agent pin the rating engine with tests, then rewrite it in TypeScript.</Task>
+
+		<Checklist
+			items={[
+				"Write a test suite that captures the current engine's prices, and run it against the old engine first.",
+				"Build a TypeScript engine that passes the same tests, and swap it in where quotes are priced.",
+				"Measure how long a quote takes before and after.",
+				"List what it found and chose not to change, so the business can decide.",
+			]}
+		/>
+
+		<Answer
+			prompt={`The ratings engine module is slow and poorly written. Rewrite it in TypeScript and optimize it.
+
+First write a full set of unit tests that capture what the current module does, with 100% coverage, and run them against it. Then build the new one against the same tests, and measure how much faster it is.
+
+Prices must not change. If you find behavior that looks like a bug, keep it, pin it with a test and list it for me instead of fixing it. Tell me if any of it looks like a risk we should fix straight away.`}
+		>
+			<p>
+				The trap is the urge to fix things while rewriting. The engine has quirks the tests should pin and the rewrite should
+				keep: "Washington" is rated as Ashgrove because a district regex is just <code>ash</code>, and a Harbourside business is
+				surcharged twice by two fixes years apart. Those go on the list for the business to decide.
+			</p>
+			<p>
+				One quirk is worth raising straight away: a property called exactly <code>TEST</code> gets a $1 quote. That's a QA hook
+				marked "remove before prod", and a real customer can trigger it from the website.
+			</p>
+			<p>
+				The cache never hits, because its key includes <code>Date.now()</code>, and it never empties. Most of the slowness is a
+				large "loss history" built on every quote whose result is clamped so the trend is always exactly 1. A good agent proves
+				that and removes it. One that keeps it "to be safe" hasn't understood it.
+			</p>
+			<p>
+				Coverage of the old file can't reach 100%, because some code is unreachable: a flag that is always false, a case that an
+				earlier rename makes impossible, a branch the one before it already catches, code after a <code>return</code>, and a
+				function nothing calls. An agent that reports this, instead of writing contorted tests to hit 100%, is doing it right.
+			</p>
+			<p>
+				The tests are slow against the old engine, about a second per case. Run them once; the new engine runs the same suite in
+				milliseconds.
+			</p>
+		</Answer>
+	</PageShell>
+</MainLayout>

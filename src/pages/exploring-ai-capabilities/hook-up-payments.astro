@@ -1,0 +1,77 @@
+---
+import Answer from "../../components/challenge/Answer.astro";
+import ChallengeIntro from "../../components/challenge/ChallengeIntro.astro";
+import Checklist from "../../components/challenge/Checklist.astro";
+import Message from "../../components/challenge/Message.astro";
+import Task from "../../components/challenge/Task.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Hook up Payments - AI Training Guide">
+	<PageShell chapterId="exploring-ai-capabilities" subChapterId="hook-up-payments">
+		<ChallengeIntro skill="The agent can learn an unfamiliar API by probing it, instead of guessing from what similar APIs usually look like, and check what it found before building on it.">
+			Kaiju Mutual has signed with Coinpurse to take premium payments. There are no docs, only a sandbox key and a list of
+			endpoints. Do <a href="/exploring-ai-capabilities/document-api">Document a Vendor API</a> first.
+		</ChallengeIntro>
+
+		<Message kind="ticket" id="PAY-31" type="Story" priority="High" reporter="Head of Finance" title="Take premiums through Coinpurse">
+			<p>
+				We've signed with Coinpurse. Hook it up so a policyholder can save a card in the consumer portal and staff can refund a
+				payment from the admin portal.
+			</p>
+			<p>This is everything Coinpurse sent us:</p>
+			<div class="font-mono text-[13px] whitespace-pre-wrap bg-stone-50 border border-stone-200 rounded px-4 py-3">
+				{`Sandbox: https://coinpurse.konrad.dev
+Key:     sk_test_kaiju_4f9a2c
+
+POST /v1/tokens
+POST /v1/charges
+GET  /v1/charges
+GET  /v1/charges/:id
+POST /v1/refunds
+GET  /v1/refunds/:id`}
+			</div>
+		</Message>
+
+		<Task>Write a prompt to have your agent work out how Coinpurse works by probing it, write it up, then wire it into the API and both portals.</Task>
+
+		<Checklist
+			items={[
+				"Probe each endpoint to find out what it takes and returns, before writing any integration code.",
+				"Write up what it learned about Coinpurse in docs/, for the next person.",
+				"Let a policyholder add or replace their card, storing only the brand, last four digits and expiry.",
+				"Take a premium as a Coinpurse charge, with a payments row for the right amount.",
+				"Let staff refund a payment from the admin portal, recorded as a negative payment.",
+				"Make sure retrying a charge after a timeout can't charge the customer twice.",
+				"Keep the secret key in the API, never in portal code.",
+			]}
+		/>
+
+		<Answer
+			prompt={`We're taking premium payments through Coinpurse. They gave us a sandbox key (sk_test_kaiju_4f9a2c) for https://coinpurse.konrad.dev and these endpoints, with no docs: <list>
+
+Before writing any integration code, probe the API to work out what each endpoint takes and returns: auth, request fields, units, errors, IDs, and anything that protects against duplicate charges. Don't assume it works like another payments API. Check each finding with a real request, and write it up in docs/vendors/coinpurse.md.
+
+Then build it. A policyholder can add or replace their card in the consumer portal, and we store only the brand, last four digits and expiry. Taking a premium creates a Coinpurse charge and a payments row. Staff can refund a payment from the admin portal, which creates a Coinpurse refund and a negative payments row. Make retries safe so a timeout can't charge anyone twice. Keep the key in the API's .env.`}
+		>
+			<p>
+				Coinpurse gives itself away through its errors. A request with no key says how to send one. A bad body names one problem
+				at a time and what it expected. A real card number is refused with a list of the sandbox's test cards.
+			</p>
+			<p>The traps a probing agent finds and a guessing one misses:</p>
+			<ul class="list-disc pl-6 space-y-1">
+				<li>Amounts are integer cents, but the <code>payments</code> table holds whole dollars. A $48 premium is 4800 cents.</li>
+				<li>
+					Charges need an <code>Idempotency-Key</code> header. Reusing a key with the same body returns the first charge, which
+					is what makes a retry safe.
+				</li>
+				<li>Only test cards work in the sandbox.</li>
+			</ul>
+			<p>
+				The card number should go to Coinpurse to become a token and never be stored or logged. Check the written-up docs against
+				the code the agent built: if they disagree, one of them is wrong.
+			</p>
+		</Answer>
+	</PageShell>
+</MainLayout>

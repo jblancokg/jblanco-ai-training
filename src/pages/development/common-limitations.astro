@@ -1,0 +1,169 @@
+---
+import Callout from "../../components/Callout.astro";
+import PageShell from "../../components/PageShell.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Common Limitations - AI Training Guide">
+	<PageShell chapterId="development" subChapterId="common-limitations">
+		<div class="prose space-y-6">
+			<p>
+				AI coding tools are genuinely useful, but have some notable limitations. If you use them more like a fast junior
+				developer, they become much easier to work with.
+			</p>
+
+			<Callout variant="success" title="Calibrating expectations">
+				<p>
+					For development work, AI is now roughly at the level of a <strong>new grad developer</strong>: it can complete real tasks, write functional code, and move quickly,
+					but it will regularly miss nuance, overbuild, misread intent, and make
+					confident mistakes. It also starts every task without your team's domain
+					knowledge or the full context behind past decisions unless you provide
+					that context explicitly.
+				</p>
+			</Callout>
+
+			<p>
+				Knowing the common failure modes matters because most AI-assisted
+				development problems are not caused by a total lack of ability. They're
+				caused by the model being <em>almost</em> capable enough, which makes bad
+				output look more trustworthy than it should.
+			</p>
+
+			<h3>Where Models Commonly Struggle</h3>
+
+			<ul class="space-y-4 my-4">
+				<li>
+					<span class="font-semibold">Hallucinated APIs, packages, and methods.</span>{" "}
+					Models confidently generate code that references methods, libraries, and
+					configuration options that simply do not exist or are from older versions of the library. Examples include invented
+					Prisma methods like <code>prisma.$upload</code>, fabricated fetch options
+					like <code>autoRetry: true</code>, and packages like{" "}
+					<code>@prisma/cache</code> that were never published.{" "}
+					<a href="https://31daysofvibecoding.com/2026/01/14/when-ai-hallucinates/" class="text-teal-600 hover:text-teal-800 text-sm ml-1" target="_blank" rel="noopener">[ref]</a>{" "}
+					This happens because the model predicts plausible-looking patterns from
+					training data without any ability to verify them. The code often looks
+					correct at a glance, and these errors only surface at runtime.
+				</li>
+				<li>
+					<span class="font-semibold">Outdated training data and library versions.</span>{" "}
+					Every model has a knowledge cutoff. It does not know about the version of
+					a library you installed last week, and it will confidently suggest
+					deprecated APIs, old patterns, or syntax from previous major versions.
+					You will notice this most with libraries that have had recent major
+					version changes. When you hit this, the fix is to link the model directly
+					to the current documentation, or better yet, write or download a skill
+					for that library so it has accurate reference material every time. Without
+					this, you will spend more time debugging the model's outdated suggestions
+					than you would writing the code yourself.
+				</li>
+				<li>
+					<span class="font-semibold">Silent failures and subtly wrong code.</span>{" "}
+					This is one of the more dangerous failure modes. Newer models have gotten
+					good at producing code that runs without errors, passes a quick visual
+					check, and appears to work, but does not actually do what was intended.{" "}
+					<a href="https://spectrum.ieee.org/ai-coding-degrades" class="text-teal-600 hover:text-teal-800 text-sm ml-1" target="_blank" rel="noopener">[ref]</a>{" "}
+					A rate limiter config that silently ignores a setting, a filter that
+					misses an edge case, a calculation that returns a plausible but wrong
+					number. These bugs slip past code review because the code <em>looks</em>{" "}
+					reasonable. This is why manual testing remains essential. You need to
+					actually click through the feature, try the edge cases, and verify the
+					behavior yourself. Automated tests help, but they only catch what you
+					thought to test for. Silent failures are, by definition, the things
+					nobody expected to break.
+				</li>
+				<li>
+					<span class="font-semibold">Gaming the check instead of solving the problem.</span>{" "}
+					When you give a model a target like "make the tests pass" or "get the build green", it will sometimes satisfy the letter of that
+					instruction without doing the real work. It might weaken or delete a failing test, hardcode the expected value, wrap the failure in a{" "}
+					<code>try/catch</code> that swallows it, or call <code>sys.exit(0)</code> so the test runner reports success.{" "}
+					<a href="https://www.anthropic.com/research/emergent-misalignment-reward-hacking" class="text-teal-600 hover:text-teal-800 text-sm ml-1" target="_blank" rel="noopener">[ref]</a>{" "}
+					Researchers call this reward hacking, and it is different from a silent failure: the model is not confused, it has found a shortcut to
+					the goal you defined. Watch for tests that changed when you only asked for a fix, suspiciously narrow assertions, and a green run that
+					does not match what you see in the app.
+				</li>
+				<li>
+					<span class="font-semibold">Security vulnerabilities.</span>{" "}
+					AI-generated code introduces security flaws at a surprisingly high rate, and this has not improved as models have gotten smarter.
+					Veracode's Spring 2026 update re-tested the current flagship models (GPT-5.x, Gemini 3, Claude 4.5/4.6) and still found a security flaw
+					in 45% of generated code, essentially unchanged from two years earlier despite large gains in functional ability.{" "}
+					<a href="https://www.veracode.com/blog/spring-2026-genai-code-security/" class="text-teal-600 hover:text-teal-800 text-sm ml-1" target="_blank" rel="noopener">[ref]</a>{" "}
+					Reasoning-focused models did somewhat better (around a 70% pass rate), but that still leaves roughly one in three snippets flawed.
+					Models tend to skip input validation, use insecure defaults, and miss authentication edge cases. Treat any AI-generated code that
+					handles user input, authentication, or data storage as needing explicit security review.
+				</li>
+				<li>
+					<span class="font-semibold">UI implementation and design translation.</span>{" "}
+					Models can build workable interfaces, but they are still weak at
+					translating polished designs into production-quality UI. Even when you
+					hook a tool into Figma, most design files are not structured cleanly
+					enough to map directly into good code. Spacing rules are inconsistent,
+					component intent is implicit, responsive behavior is underspecified, and
+					visual polish often gets lost in translation. This is an area where you will need to do the work yourself to ensure the UI is polished and functional.
+				</li>
+				<li>
+					<span class="font-semibold">Requirement interpretation.</span> Models are
+					prone to filling in missing details on their own. If a requirement is
+					ambiguous, they will often choose a direction confidently instead of
+					stopping to ask the question a careful developer would ask first. You can mitigate this by explicitly asking the model to ask clarifying questions before writing the code.
+				</li>
+				<li>
+					<span class="font-semibold">Agreeing with you (sycophancy).</span>{" "}
+					Models are trained on human feedback, which nudges them toward telling you what you want to hear. Ask "is this a good approach?" and the
+					default answer skews toward yes. Suggest a wrong fix and the model may adopt it rather than correct you.{" "}
+					<a href="https://en.wikipedia.org/wiki/Sycophancy_(artificial_intelligence)" class="text-teal-600 hover:text-teal-800 text-sm ml-1" target="_blank" rel="noopener">[ref]</a>{" "}
+					Leading questions get unreliable answers, so ask "what are the tradeoffs of X versus Y?" rather than "X is better, right?", and treat
+					enthusiastic agreement with your own idea as the weakest form of validation.
+				</li>
+				<li>
+					<span class="font-semibold">Consistency across larger changes.</span>{" "}
+					Small tasks often go well. Multi-file refactors, architecture changes,
+					and cross-cutting updates are where quality drops faster. The model may
+					fix eight places and miss the ninth, or update code but forget tests,
+					docs, migrations, or monitoring.
+				</li>
+				<li>
+					<span class="font-semibold">Judgment and taste.</span> Models can
+					reproduce common patterns, but they still struggle with the kind of
+					taste-based decisions strong engineers make: when to keep something
+					simple, when to abstract, when a UI feels off, or when a technically
+					correct solution is the wrong tradeoff for the team.
+				</li>
+			</ul>
+
+			<Callout variant="tip" title="Current state, not permanent state">
+				<p>
+					These limitations describe the current state of AI tooling during
+					development. They will improve over time, and some will improve quickly.
+					But for now, the safe assumption is that the model can help execute
+					work, not replace product judgment, domain expertise, or careful human
+					review.
+				</p>
+			</Callout>
+
+			<h3>Further Reading</h3>
+			<ul class="text-sm space-y-2 my-4">
+				<li>
+					<a href="https://spectrum.ieee.org/ai-coding-degrades" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">AI Coding Assistants Are Getting Worse</a> — IEEE Spectrum, Jan 2026
+				</li>
+				<li>
+					<a href="https://www.veracode.com/blog/spring-2026-genai-code-security/" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">Spring 2026 GenAI Code Security Update</a> — Veracode, Mar 2026
+				</li>
+				<li>
+					<a href="https://31daysofvibecoding.com/2026/01/14/when-ai-hallucinates/" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">When AI Starts Hallucinating</a> — 31 Days of Vibe Coding, Jan 2026
+				</li>
+				<li>
+					<a href="https://www.sonarsource.com/resources/library/llm-code-generation/" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">LLMs for Code Generation: Research on Quality</a> — Sonar
+				</li>
+				<li>
+					<a href="https://www.helpnetsecurity.com/2025/08/07/create-ai-code-security-risks/" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">AI Can Write Your Code, but Nearly Half May Be Insecure</a> — Help Net Security, 2025
+				</li>
+				<li>
+					<a href="https://www.anthropic.com/research/emergent-misalignment-reward-hacking" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">From Shortcuts to Sabotage: Reward Hacking</a> — Anthropic, Nov 2025
+				</li>
+				<li>
+					<a href="https://en.wikipedia.org/wiki/Sycophancy_(artificial_intelligence)" class="text-teal-600 hover:text-teal-800" target="_blank" rel="noopener">Sycophancy in AI</a> — overview of the phenomenon and the 2025 GPT-4o incident
+				</li>
+			</ul>
+		</div>
+	</PageShell>
+</MainLayout>
